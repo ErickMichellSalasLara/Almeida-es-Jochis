@@ -45,15 +45,23 @@ class Button():
 		else:
 			self.text = self.font.render(self.text_input, True, self.base_color)
 
-class Pokemones(pygame.sprite.Sprite): #Se crea la clase de los pokemones, usando una subclase de Sprite
-    def __init__(self): #Iniciamos la clase y la super clase
-        super().__init__() # La super clase es la clase Sprite, la cual nos da acceso a sus metodos y atributos
-        
+class Pokemon:
+    def __init__(self, nombre, tipo, vida, ataques):
+        self.nombre = nombre
+        self.tipo = tipo
+        self.vida = vida
+        self.ataques = ataques
+    pass
 
 class Game(object):
     def __init__(self): # Iniciamos la clase
         self.game_over = False # Variable para saber si el juego se ha terminado o no
         self.score = 0 # Variable para llevar la puntuacion del jugador
+        
+        # Esto sirve para cargar la imagen una sola vez y no cargarlo de que 60 veces por segundo xd
+        self.background_menu = pygame.image.load("Sprites/background_menu.jpg").convert()
+        self.play_img = pygame.image.load("Assets/Play Rect.png")
+        self.quit_img = pygame.image.load("Assets/Quit Rect.png")
         
     def display_frame(self, screen):
         screen.fill(WHITE)
@@ -66,14 +74,14 @@ class Game(object):
         
             pass
     def MainMenu(self, screen):
-        screen.blit(pygame.image.load("Sprites/background_menu.jpg").convert()) # Se carga la imagen de fondo del menu, y se dibuja en la pantalla
+        screen.blit(self.background_menu, (0, 0)) # Se carga la imagen de fondo del menu, y se dibuja en la pantalla
         menu_mouse_pos = pygame.mouse.get_pos()
     
         menu_text = get_font(100).render("POKE - UTR", True, "#8d6922")
         menu_rect = menu_text.get_rect(center=(SCREEN_WIDTH/2, 200)) # Menu rect es el rectangulo del menu, el cual se posiciona en el centro de la pantalla, a 100 pixeles de altura
     
-        play_button = Button(image=pygame.image.load("Assets/Play Rect.png"), pos=(SCREEN_WIDTH/2, 400), text_input="PLAY", font=get_font(75), base_color="#d8b265", hovering_color="White")
-        quit_button = Button(image=pygame.image.load("Assets/Quit Rect.png"), pos=(SCREEN_WIDTH/2, 550), text_input="QUIT", font=get_font(75), base_color="#d8b265", hovering_color="White")
+        play_button = Button(image=self.play_img, pos=(SCREEN_WIDTH/2, 400), text_input="PLAY", font=get_font(75), base_color="#d8b265", hovering_color="White")
+        quit_button = Button(image=self.quit_img, pos=(SCREEN_WIDTH/2, 550), text_input="QUIT", font=get_font(75), base_color="#d8b265", hovering_color="White")
     
         screen.blit(menu_text, menu_rect) # Se dibuja el texto del menu en la pantalla, usando el rectangulo del menu para posicionarlo
         for button in [play_button, quit_button]: # Se dibujan los botones del menu en la pantalla, usando el metodo update de la clase Button
