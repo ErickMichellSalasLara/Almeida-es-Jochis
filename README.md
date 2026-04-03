@@ -1,7 +1,7 @@
 # Almeida-es-Jochis
 
  - Ocupamos un sistema de Puntuacion por cada ronda que se gane n el juego
- - Un menu donde se pueda dar a "Jugar"
+ - Un menu donde se pueda dar a "Jugar" // Ya se hizo
  - Los "pokemones" los cuales se haran e una herencia
  - Encapsulamiento de los valores en cada funcion
  - Sistema de combates por turnos
