@@ -1,9 +1,11 @@
 # Archivo donde se hara el proyecto
-import pygame, random, sys
+import pygame, sys, numpy as np
+from pokedata import Table_Types, Movements, STATS_BASE, Giovanni
 
 SCREEN_WIDTH = 1280 #Ancho
-SCREEN_HEIGHT = 700 #Largo
+SCREEN_HEIGHT = 720 #Largo
 WHITE = (255, 255, 255) #Blanco
+BLACK = (0, 0, 0) #Negro
 
 pygame.display.set_caption("POKEUTR") #Titulo de la ventana del juego
 
@@ -45,34 +47,67 @@ class Button():
 		else:
 			self.text = self.font.render(self.text_input, True, self.base_color)
 
-class Pokemon:
-    def __init__(self, nombre, tipo, vida, ataques):
-        self.nombre = nombre
-        self.tipo = tipo
-        self.vida = vida
-        self.ataques = ataques
-    pass
-
 class Game(object):
     def __init__(self): # Iniciamos la clase
         self.game_over = False # Variable para saber si el juego se ha terminado o no
         self.score = 0 # Variable para llevar la puntuacion del jugador
+        self.all_sprite_list = pygame.sprite.Group() # Creamos una lista de sprites, la cual se usara para dibujar todos los sprites en la pantalla, usando el metodo draw de la clase Group de Pygame
+        self.state = "MENU" # Estado actual del juego: MENU o PLAY
+        self.name_player = "" # Variable para guardar el nombre del jugador, la cual se usara para referirse a el durante el juego
+        self.input_text = "" # Variable para guardar el texto que el jugador ingresa
+        self.num_combate = 0 # Variable para llevar la cuenta de los combates realizados, la cual se usara para mostrar el numero de combate en la pantalla
         
         # Esto sirve para cargar la imagen una sola vez y no cargarlo de que 60 veces por segundo xd
-        self.background_menu = pygame.image.load("Sprites/background_menu.jpg").convert()
+        self.background_menu = pygame.image.load("Assets/background_menu.jpg").convert()
         self.play_img = pygame.image.load("Assets/Play Rect.png")
         self.quit_img = pygame.image.load("Assets/Quit Rect.png")
+        self.background_game_over = pygame.image.load("Assets/fondogameover.png").convert()
+        self.background_play = pygame.image.load("Assets/campo_batalla.jpeg").convert()
         
     def display_frame(self, screen):
         screen.fill(WHITE)
-        
+                    
+        if self.game_over:
+            screen.blit(self.background_game_over, (0, 0))
+            font = pygame.font.SysFont("Fonts/TEXTO_MENU.ttf", 25)
+            screen_game_over = font.render("Game Over!.", True, "#7c2626")
+            screen_continue = font.render("Press enter to play again. Score: " + str(self.score), True, "#be6236")
+            center_x = (SCREEN_WIDTH // 2) - (screen_game_over.get_width() // 2)
+            center_y = (SCREEN_HEIGHT // 2) - (screen_game_over.get_height() // 2)
+            screen.blit(screen_game_over, (center_x, center_y))
+            screen.blit(screen_continue, (center_x, center_y + 30))
+        if not self.game_over:
+            self.all_sprite_list.draw(screen) # Dibujamos todos los sprites en la pantalla, usando el metodo draw de la clase Group de Pygame
+        pygame.display.flip() # Actualizamos la pantalla para que se dibujen los cambios realizados
+
+        if self.state == "play":
+            screen.blit(self.background_play, (0, 0))
+            font = pygame.font.SysFont("Fonts/TEXTO_MENU.ttf", 25)
+            screen_title = font.render("Combate " + str(self.num_combate), True, "#ffffff")
+            screen.blit(screen_title, (10, 10))
+            self.all_sprite_list.draw(screen) # Dibujamos todos los sprites en la pantalla, usando el metodo draw de la clase Group de Pygame
+            
     #Esta funcion será toda mi logica del juego.
-    def play(self):
-        # Aqui se hara el codigo del juego, como la logica del juego, el movimiento de los personajes, las colisiones etc
-        while not self.game_over:
-        
-        
-            pass
+    def play(self, screen):
+        screen.blit(self.background_play, (0, 0))
+        font = get_font(50)
+        title_text = font.render("Campo de batalla", True, WHITE)
+        screen.blit(title_text, (SCREEN_WIDTH//2 - title_text.get_width()//2, 50))
+
+        info_font = get_font(30)
+        info_text = info_font.render("Presiona ESC para volver al menú", True, WHITE)
+        screen.blit(info_text, (SCREEN_WIDTH//2 - info_text.get_width()//2, SCREEN_HEIGHT - 80))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.state = "MENU"
+
+        pygame.display.update()
+
     def MainMenu(self, screen):
         screen.blit(self.background_menu, (0, 0)) # Se carga la imagen de fondo del menu, y se dibuja en la pantalla
         menu_mouse_pos = pygame.mouse.get_pos()
@@ -93,8 +128,8 @@ class Game(object):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN: # Si se hace click con el mouse
-                if play_button.checkForInput(menu_mouse_pos): # Si el mouse esta sobre el boton de play, se llama a la funcion main, la cual es la funcion principal del juego
-                    main()
+                if play_button.checkForInput(menu_mouse_pos): # Si el mouse esta sobre el boton de play, vamos al estado de juego
+                    self.state = "PLAY"
                 if quit_button.checkForInput(menu_mouse_pos): # Si el mouse esta sobre el boton de quit, se cierra el juego
                     pygame.quit()
                     sys.exit()
@@ -102,6 +137,7 @@ class Game(object):
         pygame.display.update() # Se actualiza la pantalla para que se dibujen los cambios realizados
         pass
 
+    
 def main():
     pygame.init()
     
@@ -114,7 +150,10 @@ def main():
     game = Game() # Se crea una instancia de la clase Game, para poder acceder a sus metodos y atributos
     
     while not done:
-        game.MainMenu(screen) # Se llama a la funcion MainMenu de la clase Game, para mostrar el menu del juego
+        if game.state == "MENU":
+            game.MainMenu(screen)
+        elif game.state == "PLAY":
+            game.play(screen)
         clock.tick(60) # Se establece el limite de frames por segundo del juego a 60
     pygame.quit() # Se cierra el juego
     
