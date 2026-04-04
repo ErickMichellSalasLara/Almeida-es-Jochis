@@ -1,6 +1,8 @@
 # Archivo donde se hara el proyecto
 import pygame, sys, numpy as np
 from pokedata import Table_Types, Movement, STATS_BASE, Giovanni
+from battle import BattleManager
+from Trainers import ENTRENADORES, get_equipo_aleatorio, get_lista_pokemon_disponibles
 
 SCREEN_WIDTH = 1280 #Ancho
 SCREEN_HEIGHT = 720 #Largo
