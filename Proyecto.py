@@ -2,8 +2,9 @@
 import pygame, random, sys
 
 SCREEN_WIDTH = 1280 #Ancho
-SCREEN_HEIGHT = 700 #Largo
+SCREEN_HEIGHT = 720 #Largo
 WHITE = (255, 255, 255) #Blanco
+BLACK = (0, 0, 0) #Negro
 
 pygame.display.set_caption("POKEUTR") #Titulo de la ventana del juego
 
@@ -57,20 +58,36 @@ class Game(object):
     def __init__(self): # Iniciamos la clase
         self.game_over = False # Variable para saber si el juego se ha terminado o no
         self.score = 0 # Variable para llevar la puntuacion del jugador
+        self.all_sprite_list = pygame.sprite.Group() # Creamos una lista de sprites, la cual se usara para dibujar todos los sprites en la pantalla, usando el metodo draw de la clase Group de Pygame
         
         # Esto sirve para cargar la imagen una sola vez y no cargarlo de que 60 veces por segundo xd
-        self.background_menu = pygame.image.load("Sprites/background_menu.jpg").convert()
+        self.background_menu = pygame.image.load("Assets/background_menu.jpg").convert()
         self.play_img = pygame.image.load("Assets/Play Rect.png")
         self.quit_img = pygame.image.load("Assets/Quit Rect.png")
+        self.background_game_over = pygame.image.load("Assets/fondogameover.png").convert()
         
     def display_frame(self, screen):
         screen.fill(WHITE)
         
+        if self.game_over:
+            screen.blit(self.background_game_over, (0, 0))
+            font = pygame.font.SysFont("Fonts/TEXTO_MENU.ttf", 25)
+            text = font.render("Game Over!.", True, "#7c2626")
+            text2 = font.render("Press enter to play again. Score: " + str(self.score), True, "#be6236")
+            center_x = (SCREEN_WIDTH // 2) - (text.get_width() // 2)
+            center_y = (SCREEN_HEIGHT // 2) - (text.get_height() // 2)
+            screen.blit(text, (center_x, center_y))
+            screen.blit(text2, (center_x, center_y + 30))
+        if not self.game_over:
+            self.all_sprite_list.draw(screen) # Dibujamos todos los sprites en la pantalla, usando el metodo draw de la clase Group de Pygame
+        pygame.display.flip() # Actualizamos la pantalla para que se dibujen los cambios realizados
+
+
     #Esta funcion será toda mi logica del juego.
     def play(self):
         # Aqui se hara el codigo del juego, como la logica del juego, el movimiento de los personajes, las colisiones etc
         while not self.game_over:
-        
+            
         
             pass
     def MainMenu(self, screen):

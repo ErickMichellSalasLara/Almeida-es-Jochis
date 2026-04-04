@@ -10,8 +10,8 @@ Mini videojuego inspirado en Pokémon desarrollado con Python y Pygame.
 
 Responsable de la interfaz principal del juego y la base estructural del sistema.
 
-* Menú principal (Play / Quit)
-* Sistema de Game Over
+* Menú principal (Play / Quit) // Ya lo hice
+* Sistema de Game Over // Ya quedo
 * Entrada de nombre del jugador
 * Sistema de puntuación por rondas
 * Clase base de Pokémon (estructura con herencia)
