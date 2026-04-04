@@ -1,6 +1,6 @@
 # Archivo donde se hara el proyecto
 import pygame, sys, numpy as np
-from pokedata import Table_Types, Movements, STATS_BASE, Giovanni
+from pokedata import Table_Types, Movement, STATS_BASE, Giovanni
 
 SCREEN_WIDTH = 1280 #Ancho
 SCREEN_HEIGHT = 720 #Largo
