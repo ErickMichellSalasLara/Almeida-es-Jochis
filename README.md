@@ -6,22 +6,15 @@ Mini videojuego inspirado en Pokémon desarrollado con Python y Pygame.
 
 ---
 
-## 👨‍💻 Erick — Interfaz y estructura base
+## 👨‍💻 Erick — Interfaz y estructura base y 👨‍💻 Didier — Sistema de ataques
 
-Responsable de la interfaz principal del juego y la base estructural del sistema.
+Responsables de la interfaz principal del juego y la base estructural del sistema y Encargados de la lógica de ataques y efectos dentro del combate.
 
 * Menú principal (Play / Quit) // Ya lo hice
 * Sistema de Game Over // Ya quedo
 * Entrada de nombre del jugador
 * Sistema de puntuación por rondas
 * Clase base de Pokémon (estructura con herencia)
-
----
-
-## 👨‍💻 Didier — Sistema de ataques
-
-Encargado de la lógica de ataques y efectos dentro del combate.
-
 * Sistema de selección de ataques (4 por Pokémon)
 * Definición de estadísticas de ataques (daño, tipo, precisión, etc.)
 * Sistema de efectividad entre tipos
@@ -30,22 +23,15 @@ Encargado de la lógica de ataques y efectos dentro del combate.
 
 ---
 
-## 👨‍💻 Alberto — Sistema de combate
+## 👨‍💻 Alberto — Sistema de combate y 👨‍💻 Diego — Flujo del juego y selección
 
-Responsable del flujo principal de combate por turnos.
+Responsables del flujo principal de combate por turnos y Encargados de la selección de personajes y flujo entre pantallas.
 
 * Sistema de combate por turnos
 * Lógica de turnos (orden de ataque)
 * Sistema de vida (HP) y debilitamiento
 * Sistema de cambio de Pokémon
 * Definición de estructura de entrenadores y límite de Pokémon
-
----
-
-## 👨‍💻 Diego — Flujo del juego y selección
-
-Encargado de la selección de personajes y flujo entre pantallas.
-
 * Selección de Pokémon (manual y aleatoria)
 * Generación de Pokémon aleatorios
 * Interfaz de selección de Pokémon
