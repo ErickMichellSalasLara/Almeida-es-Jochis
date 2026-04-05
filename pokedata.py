@@ -113,15 +113,15 @@ MOVIMIENTOS = {
 # Aplicamos herencia en esta parte y encapsulamiento
 class STATS_BASE:
     def __init__(self, nombre, tipo, hp_max, ataque, defensa, velocidad, nivel = 50):
-        self._nombre = nombre
-        self._tipo = tipo
-        self._hp_max = hp_max
-        self._hp_actual = hp_max  # Inicializamos el HP actual al maximo
+        self.nombre = nombre
+        self.tipo = tipo
+        self.hp_max = hp_max
+        self.hp_actual = hp_max  # Inicializamos el HP actual al maximo
         self.ataque = ataque
         self.defensa = defensa
         self.velocidad = velocidad
-        self._nivel = nivel
-        self._movimientos = []
+        self.nivel = nivel
+        self.movimientos = []
         self.mods = np.array([1.0, 1.0, 1.0])  # Modificadores: [ataque, defensa, velocidad]
         
     #Esta funcion sirve para identificar si hay un buff o un debuff
@@ -176,13 +176,13 @@ class STATS_BASE:
     
     # El hp actual se inicializa al maximo hp, ya que al crear un nuevo pokemon, este estara completamente sano
     def curar_totalmente(self):
-        self._hp_actual = self._hp_max
-        return self._hp_actual #devuelve la vida completa al crearse un nuevo pokemon o seguir de batalla
+        self.hp_actual = self.hp_max
+        return self.hp_actual #devuelve la vida completa al crearse un nuevo pokemon o seguir de batalla
     
     # El metodo recibir_daño se encarga de reducir el hp actual del pokemon, y si el hp actual llega a 0, el pokemon se considera debilitado
     def recibir_daño(self, cantidad):
-        self._hp_actual = max(0, self._hp_actual - cantidad)
-        return self._hp_actual #devuelve la cantidad de daño hecho
+        self.hp_actual = max(0, self.hp_actual - cantidad)
+        return self.hp_actual #devuelve la cantidad de daño hecho
         
 #------ Clases de los pokemones, cada clase hereda de la clase STATS_BASE, y se le pueden agregar atributos y metodos especificos de cada pokemon, como por ejemplo, los movimientos que puede aprender, las habilidades que tiene etc.------
 class Giovanni(STATS_BASE):
@@ -250,11 +250,11 @@ class Rafa(STATS_BASE):
         self._movimientos = [MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Bostezo"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Compilar"]]
         #--------- Aqui se completa la clase
         
-class Didier(STATS_BASE):
+class Joshua(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Typhlosion base
         super().__init__(
-            nombre = "Didier",
+            nombre = "Joshua",
             tipo = "CHATGIPITY",
             hp_max = 78,
             ataque = 84,
@@ -282,11 +282,11 @@ class Abraham(STATS_BASE):
         self._movimientos = [MOVIMIENTOS["Cálculo Mental"], MOVIMIENTOS["Integral Doble"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Enjuague"]]
         #--------- Aqui se completa la clase
         
-class Alberto(STATS_BASE):
+class Andrew(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Exeggutor base
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
-            nombre = "Alberto",
+            nombre = "Andrew",
             tipo = "DUCHA",
             hp_max = 95,
             ataque = 95,
@@ -298,11 +298,11 @@ class Alberto(STATS_BASE):
         self._movimientos = [MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Baño"], MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Actitud"]]
         #--------- Aqui se completa la clase
         
-class Morro_Generico_Diseño(STATS_BASE):
+class Generico_Diseño(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Delphox base
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
-            nombre = "Morro Generico Diseño",
+            nombre = "Generico Diseño",
             tipo = "FURROS",
             hp_max = 75,
             ataque = 69,
@@ -314,11 +314,11 @@ class Morro_Generico_Diseño(STATS_BASE):
         self._movimientos = [MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Comision de arte"], MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Formulario"]]
         #--------- Aqui se completa la clase
         
-class Morro_Generico_Mercadofiesta(STATS_BASE):
+class Generico_Mercadofiesta(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Kilowattrel base
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
-            nombre = "Morro Generico Mercadofiesta",
+            nombre = "Generico Mercadofiesta",
             tipo = "MERCADOFIESTA",
             hp_max = 70,
             ataque = 70,
@@ -362,11 +362,11 @@ class Osmar(STATS_BASE):
         self._movimientos = [MOVIMIENTOS["Cálculo Mental"], MOVIMIENTOS["Integral Doble"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Brillo Propio"]]
         #--------- Aqui se completa la clase
         
-class Morro_Ardido_Generico(STATS_BASE):
+class Morro_Ardido(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Vivillon base
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
-            nombre = "Morro Ardido Generico",
+            nombre = "Morro Ardido",
             tipo = "JOCHIS",
             hp_max = 80,
             ataque = 52,
@@ -394,7 +394,7 @@ class Morra_Castrosa(STATS_BASE):
         self._movimientos = [MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Ilusionista"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Descuento"]]
         #--------- Aqui se completa la clase
         
-class El_Rector_Que_No_Es_El_Rector(STATS_BASE):
+class El_Rector(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Snorlax base
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel

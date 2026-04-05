@@ -1,20 +1,20 @@
 import random
 from pokedata import (
-    Giovanni, David, Erick, Rafa, Didier, Abraham, Alberto,
-    Morro_Generico_Diseño, Morro_Generico_Mercadofiesta, Gato,
-    Osmar, Morro_Ardido_Generico, Morra_Castrosa,
-    El_Rector_Que_No_Es_El_Rector, Chechi, Fabian, Sigma,
+    Giovanni, David, Erick, Rafa, Joshua, Abraham, Andrew,
+    Generico_Diseño, Generico_Mercadofiesta, Gato,
+    Osmar, Morro_Ardido, Morra_Castrosa,
+    El_Rector, Chechi, Fabian, Sigma,
     Diseño_Raro, Youtuber_Generico, JabonZote,
     Morro_Cachimba, YOVOY, GOTICA, Almeida
 )
 
 #-------- POOL DE TODOS LOS POKEMON DISPONIBLES PARA EL JUGADOR
 All_Pokemons = [
-    Giovanni, David, Erick, Rafa, Didier, Abraham, Alberto,
-    Morro_Generico_Diseño, Morro_Generico_Mercadofiesta, Gato,
-    Osmar, Morro_Ardido_Generico, Morra_Castrosa, Chechi,
+    Giovanni, David, Erick, Rafa, Joshua, Abraham, Andrew,
+    Generico_Diseño, Generico_Mercadofiesta, Gato,
+    Osmar, Morro_Ardido, Morra_Castrosa, El_Rector, Chechi,
     Fabian, Sigma, Diseño_Raro, Youtuber_Generico,
-    JabonZote, Morro_Cachimba, YOVOY, GOTICA
+    JabonZote, Morro_Cachimba, YOVOY, GOTICA, Almeida
 ]
 
 #---------- CLASE ENTRENADOR: representa a un rival con su equipo
@@ -30,8 +30,16 @@ class Entrenador:
     #Esta funcion funciona de tal manera que, en self.pokemon_clases, vas a guardar los pokes que se consigan
     #con la "clase()", que es basicamente llamar al constructor de cada Pokemon. Esto crea a los pokes desde 0 con hp full
     def get_equipo(self):
-        #Genera instancias frescas del equipo (con HP completo)
-        return [clase() for clase in self.pokemon_clases]
+        #Se crea una lista vacia para agregar a los pokes
+        equipo = []
+        #Recorremos cada clase guardada en "pokemon_clases"
+        for clase in self.pokemon_clases:
+        #Creamos una nueva instancia del Pokémon (con vida completa)
+            nuevo_pokemon = clase()
+        #Lo agregamos al equipo
+        equipo.append(nuevo_pokemon)
+        #Regresamos la lista completa
+        return equipo
 
     def get_pokemon_actual(self):
         #Para batallas simples (1v1), devuelve solo el primer pokemon
@@ -49,17 +57,17 @@ ENTRENADORES = [
     ),
 
     Entrenador(
-        nombre="Doña Chole",
-        descripcion="Aguas con doña chole.",
-        pokemon_clases=[Morra_Castrosa, YOVOY, Diseño_Raro],
-        frase_inicio="Ay, ¿en serio me vas a retar? Qué gracioso...",
-        frase_derrota="YA NO HAY SERVICIO PARA TI!"
+        nombre="Cristian God - Ejecutor Decepcionado",
+        descripcion="Jovenes la infografia!!.\nDonde esta Rafa?!?!",
+        pokemon_clases=[Morra_Castrosa, YOVOY, Fabian],
+        frase_inicio="Compañero pongase a estudiar mejor...",
+        frase_derrota="No te mando a IN nomás por que!!....."
     ),
 
     Entrenador(
         nombre="Brandon - El GitMan",
         descripcion="Compilará tus esperanzas y las mandará al error 404.\nTiene experiencia depurando rivales.",
-        pokemon_clases=[David, Abraham, Alberto, Didier],
+        pokemon_clases=[David, Abraham, Andrew, Giovanni],
         frase_inicio="¡Vamos a ver si tu código sobrevive mis pruebas!",
         frase_derrota="Mmm... encontraste el bug en mi estrategia. Bien jugado."
     ),
@@ -67,7 +75,7 @@ ENTRENADORES = [
     Entrenador(
         nombre="Justes - 'Hola hermano!'",
         descripcion="Aquel que piensa que el mundo gira alrededor de el.\nAcuerdate de la bitacora!",
-        pokemon_clases=[Rafa, Morro_Generico_Mercadofiesta, El_Rector_Que_No_Es_El_Rector, Gato, Morro_Ardido_Generico],
+        pokemon_clases=[Andrew, Generico_Mercadofiesta, El_Rector, Gato, Morro_Ardido],
         frase_inicio="Acabare esto rapido. Los cigarros no se acaban solos!",
         frase_derrota="Jolines tio, no lo veia venir."
     ),
@@ -75,7 +83,7 @@ ENTRENADORES = [
     Entrenador(
         nombre="Almeida — El Jefe Final",
         descripcion="El entrenador más poderoso de la UTR.\nDice que no es el rector pero claramente lo es.\nEquipo completo. Sin piedad.",
-        pokemon_clases=[Almeida, El_Rector_Que_No_Es_El_Rector, Osmar, Sigma, Chechi, JabonZote],
+        pokemon_clases=[Almeida, El_Rector, Osmar, Sigma, Chechi, JabonZote],
         frase_inicio="Joven {nombre}. Que dijimos de usar Ia?",
         frase_derrota="Vaya, al parecer entendiste tu codigo a la perfección. Felicidades Joven {nombre}"
     ),
