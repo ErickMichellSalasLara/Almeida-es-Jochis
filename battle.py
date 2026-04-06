@@ -3,10 +3,14 @@ import random
 from pokedata import STATS_BASE, Table_Types
 
 class BattleManager:
-    def __init__(self, pokemon_jugador, pokemon_enemigo):
+    def __init__(self, equipo_jugador, equipo_enemigo):
         #Se crean 2 variables las cuales contendran al jugador y a la ia enemiga
-        self.pokemon_jugador = pokemon_jugador
-        self.pokemon_enemigo = pokemon_enemigo
+        self.equipo_enemigo = equipo_enemigo
+        self.equipo_jugador = equipo_jugador
+        self.indice_activo = 0
+        self.indice_activo_enemigo = 0
+        self.pokemon_jugador = self.equipo_jugador[self.indice_activo]
+        self.pokemon_enemigo = self.equipo_enemigo[self.indice_activo_enemigo]
 
         #Esta parte determina que estamos dentro del apartado "Seleccion de movimiento"
         self.estado = "SELECCION_MOVIMIENTO"  # Siempre empieza aqui
@@ -23,11 +27,8 @@ class BattleManager:
         #Por ejemplo: "Giovanni uso Siesta Mortal! Hizo 45 de daño!"
         self.log = []
 
-        #Nos aseguramos de que ambos pokemon empiecen con vida completa
-        self.pokemon_jugador.curar_totalmente()
-        self.pokemon_enemigo.curar_totalmente()
-
     #------- METODO PRINCIPAL: lo llamas cada frame desde main.py
+    
     #  Dependiendo del estado en el que te encuentres, hara cosas diferentes, tales como, hacer la batalla, aplicar efectos, etc.
     def actualizar(self, indice_movimiento_jugador = None, indice_cambio = None):
         #indice_movimiento_jugador → 0-3, el jugador eligió atacar
@@ -35,56 +36,50 @@ class BattleManager:
         if self.estado == "SELECCION_MOVIMIENTO":
             # El jugador quiere cambiar de pokémon voluntariamente
             if indice_cambio is not None:
-                self._cambiar_pokemon(indice_cambio, ya_en_juego = True)
+                self.cambiar_pokemon(indice_cambio, ya_en_juego = True)
                 # Cambiar gasta el turno: la IA igual ataca
-                self._solo_ataca_enemigo()
-                if self._verificar_fin_batalla():
+                self.solo_ataca_enemigo()
+                if self.verificar_fin_batalla():
                     self.estado = "BATALLA_TERMINADA"
                 else:
                     self.turno += 1
                     self.estado = "SELECCION_MOVIMIENTO"
 
             # El jugador escoge un movimiento
-            if indice_movimiento_jugador is not None:
-                self._registrar_elecciones(indice_movimiento_jugador)
+            elif indice_movimiento_jugador is not None:
+                self.registrar_elecciones(indice_movimiento_jugador)
                 self.estado = "EJECUTAR_TURNO"
 
-        if self.estado == "EJECUTAR_TURNO":
-            self._ejecutar_turno()
-
-            # Revisamos si el pokemon del jugador se debilitó
-            if self.pokemon_jugador.hp_actual <= 0:
-                vivos = self._get_equipo_vivo()
-                if not vivos:
-                    # Todos debilitados → perdimos
-                    self.ganador = "ENEMIGO"
-                    self.log.append("¡No te quedan más pokémon! ¡Perdiste!")
+        elif self.estado == "FORZAR_CAMBIO":
+            if indice_cambio is not None:
+                self.cambiar_pokemon(indice_cambio, ya_en_juego = False)
+                if self.verificar_fin_batalla():
                     self.estado = "BATALLA_TERMINADA"
                 else:
-                    # Hay pokémon disponibles → forzamos cambio
-                    self.estado = "FORZAR_CAMBIO"
-            if self._verificar_fin_batalla():
+                    self.turno += 1
+                    self.estado = "SELECCION_MOVIMIENTO"
+        
+        elif self.estado == "EJECUTAR_TURNO":
+            self.ejecutar_turno()
+            #Hacemos una variable pa checar si se acabo la partida
+            fin = self.verificar_fin_batalla()
+
+            # Revisamos si el pokemon del jugador se debilitó
+            if fin:
                 self.estado = "BATALLA_TERMINADA"
+
+            elif self.estado == "FORZAR_CAMBIO":
+                return
+                # Esperamos en este estado hasta que main.py llame con indice_cambio
             else:
                 self.turno += 1
                 self.movimiento_jugador = None
                 self.movimiento_enemigo = None
                 self.estado = "SELECCION_MOVIMIENTO"
-
-        elif self.estado == "FORZAR_CAMBIO":
-            # Esperamos en este estado hasta que main.py llame con indice_cambio
-            if indice_cambio is not None:
-                self._cambiar_pokemon(indice_cambio, voluntario=False)
-                # Después del cambio forzado NO ataca la IA, solo continuamos
-                self.turno += 1
-                self.movimiento_jugador = None
-                self.movimiento_enemigo = None
-                self.estado = "SELECCION_MOVIMIENTO"
-
         elif self.estado == "BATALLA_TERMINADA":
             pass
 
-    def _cambiar_pokemon(self, indice, ya_en_juego=True):
+    def cambiar_pokemon(self, indice, ya_en_juego = True):
         #Cambia el pokémon activo del jugador por el del índice indicado
         if indice < 0 or indice >= len(self.equipo_jugador):
             return
@@ -104,17 +99,35 @@ class BattleManager:
             self.log = [f"¡{anterior} se debilitó!", f"¡Elige tu siguiente pokémon!",
                         f"¡Adelante, {self.pokemon_jugador.nombre}!"]
             
-    def _solo_ataca_enemigo(self):
+    def cambiar_pokemon_enemigo(self):
+        # La IA busca el siguiente pokémon vivo en su equipo y lo manda al campo
+        pokemon_debilitado = self.pokemon_enemigo.nombre
+        primer_poke = self.indice_activo_enemigo + 1
+        for i in range(primer_poke, len(self.equipo_enemigo)):
+            if self.equipo_enemigo[i].hp_actual > 0:
+                #se guarda aqui el nombre del pokemon al cual se debilito
+                pokemon_debilitado = self.pokemon_enemigo.nombre
+                #se iguala el indice de la lista de los pokemons de la ia
+                self.indice_activo_enemigo = i
+                #Se manda al primer pokemon vivo de la ia
+                self.pokemon_enemigo = self.equipo_enemigo[self.indice_activo_enemigo]
+                self.log.append(f"¡{pokemon_debilitado} se debilitó!")
+                self.log.append(f"¡El rival envía a {self.pokemon_enemigo.nombre}!")
+                return True
+        # Si llegamos aquí, todos los pokémon del enemigo están debilitados
+        return False
+        
+    def solo_ataca_enemigo(self):
         #Cuando el jugador cambia voluntariamente, la IA aprovecha para atacar
         self.movimiento_enemigo = random.choice(self.pokemon_enemigo.movimientos)
-        self._aplicar_accion(
+        self.aplicar_accion(
             atacante=self.pokemon_enemigo,
             defensor=self.pokemon_jugador,
             movimiento=self.movimiento_enemigo,
         )
         
     #-----------REGISTRAR ELECCIONES: el jugador elige, la IA tambien
-    def _registrar_elecciones(self, indice_movimiento_jugador):
+    def registrar_elecciones(self, indice_movimiento_jugador):
         #Guarda el movimiento del jugador y genera el movimiento de la IA.
         #El indice va del 0 al 3 (4 movimientos por pokemon).
         movimientos_jugador = self.pokemon_jugador.movimientos
@@ -131,7 +144,7 @@ class BattleManager:
         self.movimiento_enemigo = random.choice(movimientos_enemigo)
 
     #------------------ EJECUTAR TURNO: aqui se aplica el daño y los efectos
-    def _ejecutar_turno(self):
+    def ejecutar_turno(self):
         #Determina quien ataca primero segun la velocidad, luego aplica los movimientos en orden.
         self.log = []  # Limpiamos el log al inicio de cada turno
         self.log.append(f"--- Turno {self.turno} ---")
@@ -142,37 +155,37 @@ class BattleManager:
 
         if vel_jugador >= vel_enemigo:
             #El jugador va primero
-            self._aplicar_accion(
+            self.aplicar_accion(
                 atacante=self.pokemon_jugador,
                 defensor=self.pokemon_enemigo,
                 movimiento=self.movimiento_jugador,
             )
             #Solo ataca el enemigo si todavia esta vivo
             if self.pokemon_enemigo.hp_actual > 0:
-                self._aplicar_accion(
+                self.aplicar_accion(
                     atacante=self.pokemon_enemigo,
                     defensor=self.pokemon_jugador,
                     movimiento=self.movimiento_enemigo,
                 )
         else:
             #El enemigo va primero
-            self._aplicar_accion(
+            self.aplicar_accion(
                 atacante=self.pokemon_enemigo,
                 defensor=self.pokemon_jugador,
                 movimiento=self.movimiento_enemigo,
             )
             #Solo ataca el jugador si todavia esta vivo
             if self.pokemon_jugador.hp_actual > 0:
-                self._aplicar_accion(
+                self.aplicar_accion(
                     atacante=self.pokemon_jugador,
                     defensor=self.pokemon_enemigo,
                     movimiento=self.movimiento_jugador,
                 )
 
     #----------- APLICAR ACCION: un pokemon usa su movimiento
-    def _aplicar_accion(self, atacante, defensor, movimiento):
+    def aplicar_accion(self, atacante, defensor, movimiento):
         #Aplica un movimiento: puede ser de daño o de efecto (buff/debuff). Agrega mensajes al log para que main.py los muestre.
-        nombre_atacante = atacante._nombre
+        nombre_atacante = atacante.nombre
         nombre_movimiento = movimiento.nombre
 
         #Verificamos si el movimiento acierta
@@ -188,7 +201,7 @@ class BattleManager:
                 nombre_objetivo = nombre_atacante
             else:
                 objetivo = defensor
-                nombre_objetivo = defensor._nombre
+                nombre_objetivo = defensor.nombre
 
             objetivo.aplicar_efecto(movimiento)
 
@@ -218,31 +231,48 @@ class BattleManager:
             defensor.recibir_daño(daño)
 
             self.log.append(f"{nombre_atacante} uso {nombre_movimiento}!")
-            self.log.append(f"Hizo {daño} de daño a {defensor._nombre}!")
+            self.log.append(f"Hizo {daño} de daño a {defensor.nombre}!")
 
             #Mensaje de efectividad
-            efectividad = Table_Types.get_effectiveness(movimiento.tipo, defensor._tipo)
-            if efectividad >= 2.0:
-                self.log.append("Es super efectivo!")
-            elif efectividad == 4.0:
+            efectividad = Table_Types.get_effectiveness(movimiento.tipo, defensor.tipo)
+            if efectividad == 4.0:
                 self.log.append("Es ULTRA efectivo!")
+            elif efectividad == 2.0:
+                self.log.append("Es super efectivo!")
             elif efectividad <= 0.5:
                 self.log.append("No es muy efectivo...")
             #Mensaje si el pokemon se debilita
             if defensor.hp_actual <= 0:
-                self.log.append(f"{defensor._nombre} se debilito!")
+                self.log.append(f"{defensor.nombre} se debilito!")
 
     #-------- VERIFICAR FIN DE BATALLA
-    def _verificar_fin_batalla(self):
-        #Revisa si alguno de los dos pokemon llego a 0 de HP. Si es asi, guarda el ganador y retorna True.
+    def verificar_fin_batalla(self):
+        # Si el pokemon del jugador muere
         if self.pokemon_jugador.hp_actual <= 0:
-            self.ganador = "ENEMIGO"
-            self.log.append(f"Perdiste! {self.pokemon_enemigo._nombre} gano la batalla!")
-            return True
+            vivos = self.get_equipo_vivo()
+
+            if not vivos:
+                # Ya no tienes pokémon, pues pierdes
+                self.ganador = "ENEMIGO"
+                self.log.append("¡No te quedan más pokémon! ¡Perdiste!")
+                return True
+            else:
+                #Si aun hay pokes, pues se cambia al siguiente
+                self.estado = "FORZAR_CAMBIO"
+                return False
+
+        # Ya si el equipo del enemigo no trae nada, ganas
         if self.pokemon_enemigo.hp_actual <= 0:
-            self.ganador = "JUGADOR"
-            self.log.append(f"Ganaste! {self.pokemon_jugador._nombre} gano la batalla!")
-            return True
+            #La IA intenta sacar otro pokémon de su equipo
+            hay_siguiente = self.cambiar_pokemon_enemigo()
+            #Si ya no tiene pokemons ahora si ganaste
+            if not hay_siguiente:
+                self.ganador = "JUGADOR"
+                self.log.append("¡Ganaste! ¡El rival no tiene más pokémon!")
+                return True
+            #Si sí tenía otro, la batalla sigue
+            return False
+
         return False
 
     #---- METODOS DE CONSULTA: para que main.py pueda leer el estado
@@ -270,7 +300,7 @@ class BattleManager:
         #Retorna True si el pokémon activo se debilitó y hay que elegir otro
         return self.estado == "FORZAR_CAMBIO"
 
-    def _get_equipo_vivo(self):
+    def get_equipo_vivo(self):
         #Se crea un array para meter a los pokes que sigan vivos
         indices_vivos = []
         #Se recorre cada poke del equipo del jugador para determinar cuales siguen vivos
