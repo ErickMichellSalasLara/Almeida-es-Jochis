@@ -2,41 +2,27 @@
 
 Mini videojuego inspirado en Pokémon desarrollado con Python y Pygame.
 
-## 🧑‍💻 Integrantes y distribución de tareas
-
----
-
-## 👨‍💻 Erick — Interfaz y estructura base y 👨‍💻 Didier — Sistema de ataques
-
-Responsables de la interfaz principal del juego y la base estructural del sistema y Encargados de la lógica de ataques y efectos dentro del combate.
-
+## Distribución de tareas
 * Menú principal (Play / Quit) // Ya lo hice
 * Sistema de Game Over // Ya quedo
-* Entrada de nombre del jugador
+* Entrada de nombre del jugador // Ya quedo
 * Sistema de puntuación por rondas
-* Clase base de Pokémon (estructura con herencia)
-* Sistema de selección de ataques (4 por Pokémon)
-* Definición de estadísticas de ataques (daño, tipo, precisión, etc.)
-* Sistema de efectividad entre tipos
-* Aplicación del daño en combate
+* Clase base de Pokémon (estructura con herencia) // Ya quedo
+* Sistema de selección de ataques (4 por Pokémon) // Ya quedo
+* Definición de estadísticas de ataques (daño, tipo, precisión, etc.) // Ya quedo
+* Sistema de efectividad entre tipos // Ya quedo
+* Aplicación del daño en combate // Ya quedo
 * Implementación de sonidos (ataques, victoria, derrota)
-
----
-
-## 👨‍💻 Alberto — Sistema de combate y 👨‍💻 Diego — Flujo del juego y selección
-
-Responsables del flujo principal de combate por turnos y Encargados de la selección de personajes y flujo entre pantallas.
-
 * Sistema de combate por turnos
-* Lógica de turnos (orden de ataque)
-* Sistema de vida (HP) y debilitamiento
-* Sistema de cambio de Pokémon
-* Definición de estructura de entrenadores y límite de Pokémon
-* Selección de Pokémon (manual y aleatoria)
+* Lógica de turnos (orden de ataque) // Ya quedo
+* Sistema de vida (HP) y debilitamiento // Ya quedo
+* Sistema de cambio de Pokémon // Ya quedo
+* Definición de estructura de entrenadores y límite de Pokémon // Ya quedo
+* Selección de Pokémon (manual y aleatoria) // Ya quedo (parcialmente ya que solo esta el manual)
 * Generación de Pokémon aleatorios
-* Interfaz de selección de Pokémon
-* Transición de selección a combate
-* Visualización de información en pantalla (nombre, vida, ataques)
+* Interfaz de selección de Pokémon // Ya quedo
+* Transición de selección a combate // Ya quedo (Anque ahora faltaria la animación)
+* Visualización de información en pantalla (nombre, vida, ataques) // Ya quedo (parcialmente)
 
 ---
 
@@ -44,13 +30,5 @@ Responsables del flujo principal de combate por turnos y Encargados de la selecc
 
 * Python
 * Pygame
-
----
-
-## 🧠 Notas del proyecto
-
-* Se utilizará programación orientada a objetos
-* El enfoque será un sistema de combate simplificado por turnos
-* Se prioriza funcionalidad sobre complejidad
 
 ---
