@@ -50,6 +50,15 @@ class BattleManager:
                 self.registrar_elecciones(indice_movimiento_jugador)
                 self.estado = "EJECUTAR_TURNO"
 
+        elif self.estado == "FORZAR_CAMBIO":
+            if indice_cambio is not None:
+                self.cambiar_pokemon(indice_cambio, ya_en_juego = False)
+                if self.verificar_fin_batalla():
+                    self.estado = "BATALLA_TERMINADA"
+                else:
+                    self.turno += 1
+                    self.estado = "SELECCION_MOVIMIENTO"
+        
         elif self.estado == "EJECUTAR_TURNO":
             self.ejecutar_turno()
             #Hacemos una variable pa checar si se acabo la partida

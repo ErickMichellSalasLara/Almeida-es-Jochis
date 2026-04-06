@@ -752,7 +752,7 @@ class Game(object):
         
         #Primero procesaremos si es que la batalla ya termino
         if self.batalla.batalla_terminada():
-            if key == pygame.K_ESCAPE:
+            if key == pygame.K_RETURN: #Enter
                 self.procesar_resultado_batalla()
             return
                     
@@ -960,9 +960,9 @@ class Game(object):
         self.menu_cambio_abierto = False
         #Reinicamos el cursor
         self.cursor_movimiento = 0
-        if not ya_en_juego:
-            self.cursor_movimiento = 0
-            self.esperando_confirmacion = True
+        self.esperando_confirmacion = True
+
+            
 
     def procesar_resultado_batalla(self):
         entrenador_actual = self.entrenadores[self.indice_entrenador_actual]
