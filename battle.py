@@ -52,21 +52,21 @@ class BattleManager:
 
         elif self.estado == "EJECUTAR_TURNO":
             self.ejecutar_turno()
+            #Hacemos una variable pa checar si se acabo la partida
+            fin = self.verificar_fin_batalla()
 
             # Revisamos si el pokemon del jugador se debilitó
-            if self.verificar_fin_batalla():
-                    self.estado = "BATALLA_TERMINADA"
+            if fin:
+                self.estado = "BATALLA_TERMINADA"
 
-        elif self.estado == "FORZAR_CAMBIO":
-            # Esperamos en este estado hasta que main.py llame con indice_cambio
-            if indice_cambio is not None:
-                self.cambiar_pokemon(indice_cambio, ya_en_juego = False)
-                # Después del cambio forzado NO ataca la IA, solo continuamos
+            elif self.estado == "FORZAR_CAMBIO":
+                return
+                # Esperamos en este estado hasta que main.py llame con indice_cambio
+            else:
                 self.turno += 1
                 self.movimiento_jugador = None
                 self.movimiento_enemigo = None
                 self.estado = "SELECCION_MOVIMIENTO"
-
         elif self.estado == "BATALLA_TERMINADA":
             pass
 
@@ -92,7 +92,9 @@ class BattleManager:
             
     def cambiar_pokemon_enemigo(self):
         # La IA busca el siguiente pokémon vivo en su equipo y lo manda al campo
-        for i in range(len(self.equipo_enemigo)):
+        pokemon_debilitado = self.pokemon_enemigo.nombre
+        primer_poke = self.indice_activo_enemigo + 1
+        for i in range(primer_poke, len(self.equipo_enemigo)):
             if self.equipo_enemigo[i].hp_actual > 0:
                 #se guarda aqui el nombre del pokemon al cual se debilito
                 pokemon_debilitado = self.pokemon_enemigo.nombre
@@ -252,9 +254,15 @@ class BattleManager:
 
         # Ya si el equipo del enemigo no trae nada, ganas
         if self.pokemon_enemigo.hp_actual <= 0:
-            self.ganador = "JUGADOR"
-            self.log.append(f"¡Ganaste! {self.pokemon_jugador.nombre} ganó la batalla!")
-            return True
+            #La IA intenta sacar otro pokémon de su equipo
+            hay_siguiente = self.cambiar_pokemon_enemigo()
+            #Si ya no tiene pokemons ahora si ganaste
+            if not hay_siguiente:
+                self.ganador = "JUGADOR"
+                self.log.append("¡Ganaste! ¡El rival no tiene más pokémon!")
+                return True
+            #Si sí tenía otro, la batalla sigue
+            return False
 
         return False
 

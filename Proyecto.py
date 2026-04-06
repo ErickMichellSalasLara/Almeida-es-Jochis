@@ -656,9 +656,38 @@ class Game(object):
             else:
                 titulo_cambio = "Cambiar Poké - Estudiante:"
                 color_id = CYAN
-            draw_text(screen, titulo_cambio, get_font(18), color_id , 1020, 490)
+            draw_text(screen, titulo_cambio, get_font(30), color_id , 1020, 540)
             if not self.batalla.necesita_cambio_forzado():
-                draw_text(screen, "ESC para cancelar", get_font(15), DARK, 785, 690, center=False)
+                draw_text(screen, "ESC para cancelar", get_font(15), DARK, 830, 700, center=False)
+        
+        if self.menu_cambio_abierto:
+            # Menú de los Pokes
+            for idx in range(len(self.equipo_jugador)):
+                poke = self.equipo_jugador[idx]
+                #Usaremos un grid para acomodar al equipo, en donde usaremos 2 columnas y 2 filas
+                columna = idx // 3
+                fila = idx % 3
+                
+                x = 820 + columna * 180 #Separamos de manera horizontal
+                y = 518 + fila * 44 #Y aqui de manera vertical
+                
+                draw_text(screen, f"[{idx + 1}] {poke.nombre}", get_font(22), CYAN, x, y + 50, center=False)
+                draw_text(screen, f"{poke.tipo}", get_font(20), DARK, x, y + 70, center=False)
+                
+        elif self.batalla.necesita_cambio_forzado():
+            # Menú de los Pokes
+            for idx in range(len(self.equipo_jugador)):
+                poke = self.equipo_jugador[idx]
+                #Usaremos un grid para acomodar al equipo, en donde usaremos 2 columnas y 2 filas
+                columna = idx // 3
+                fila = idx % 3
+                
+                x = 820 + columna * 180 #Separamos de manera horizontal
+                y = 518 + fila * 44 #Y aqui de manera vertical
+                
+                draw_text(screen, f"[{idx + 1}] {poke.nombre}", get_font(22), RED, x, y + 50, center=False)
+                draw_text(screen, f"{poke.tipo}", get_font(20), DARK, x, y + 70, center=False)
+
         else:
             # Menú de los movimientos
             draw_text(screen, "Movimientos:", get_font(25), WHITE, 1020, 535)
@@ -712,6 +741,7 @@ class Game(object):
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 self.handle_batalla_input(event.key)
+                
 
         pygame.display.update()
         
@@ -725,41 +755,6 @@ class Game(object):
             if key == pygame.K_ESCAPE:
                 self.procesar_resultado_batalla()
             return
-            
-        #Si te debilitaron un poque entra en la funcion de cambio forzado
-        if self.batalla.necesita_cambio_forzado():
-                    
-            if not vivos:
-                return
-            
-            if self.cursor_cambio not in vivos:
-                #Convertimos la  posicion en el indice real del poke
-                self.cursor_cambio = vivos[0]
-            
-            posicion_actual = vivos.index(self.cursor_cambio)
-                        
-            #Movimiento (Inputs)
-            if key == pygame.K_UP:
-                #Esta linea lo que hace es que te movera hacia arriba en la lista y de esta forma tambien se evita que se salga del rango
-                #De esta forma te mandara hasta abajo de la lista.
-                #Un ejemplo seria: (0 - 1) % 3 = -1 % 3 = 2. Esto si estas hasta arriba.
-                posicion_actual = (posicion_actual - 1) % len(vivos)
-                self.cursor_cambio = vivos[posicion_actual]
-                
-            elif key == pygame.K_DOWN:
-                #Nota: Uso módulo (%) para que el cursor sea circular, así nunca se sale de la lista y puede volver al inicio o al final automáticamente.
-                posicion_actual = (posicion_actual + 1) % len(vivos)
-                self.cursor_cambio = vivos[posicion_actual]
-                
-            elif pygame.K_1 <= key <= pygame.K_6:
-                indice = key - pygame.K_1  # convierte tecla a índice 0-5
-                #Si el indice está en la lista vivos
-                if indice in vivos:
-                    self.cursor_cambio = indice
-                    self.confirmar_cambio(ya_en_juego = True)
-            elif key == pygame.K_RETURN:
-                if self.cursor_cambio in vivos:
-                    self.confirmar_cambio(ya_en_juego = True)
                     
         #Creamos ahora los inputs para los cambios de pokes
         if self.menu_cambio_abierto:
@@ -767,7 +762,7 @@ class Game(object):
             i = 0
             for i in vivos:
                 if i != indice_activo: #Si el poke es diferente del que esta peleando
-                    pokes_equipo.append(vivos[i])
+                    pokes_equipo.append(i)
                 i += 1
             
             #If si valida si aun tienes pokes vivos en el equipo
@@ -779,26 +774,13 @@ class Game(object):
                 #mueve el cursor al primero de los vivos
                 self.cursor_cambio = pokes_equipo[0]
                 
-            posicion_actual = pokes_equipo.index(self.cursor_cambio)
-                
             if key == pygame.K_ESCAPE:
                 self.menu_cambio_abierto = False
                 self.cursor_cambio = indice_activo
-            #Estos elif hacen lo mismo de los de arriba, comprueban que no se salga a un valor inexistente
-            #y te regresa hasta abajo o arriba de la tabla independientemente
-            elif key == pygame.K_UP:
-                posicion_actual = (posicion_actual - 1) % len(pokes_equipo)
-                self.cursor_cambio = pokes_equipo[posicion_actual]
-            elif key == pygame.K_DOWN:
-                posicion_actual = (posicion_actual + 1) % len(pokes_equipo)
-                self.cursor_cambio = pokes_equipo[posicion_actual]
-                
             #Si el boton presionado se encuentra entre la tecla 1 y 6
             elif pygame.K_1 <= key <= pygame.K_6:
                 #el indice igualara el num "correcto para un indice", osease entre 0 y 5
                 indice = key - pygame.K_1
-                #si el poke escogido esta en vivos, y el poke tiene mas de 0 de vida Y el mismo no esta en el campo de batalla xdxd
-                #muchas validaciones para que el jugador no lance de que el mismo poke 4 veces XD
                 if indice in pokes_equipo:
                     #el cursor igualara el num del indice donde se encuentre el poke
                     self.cursor_cambio = indice
@@ -809,11 +791,48 @@ class Game(object):
                 if self.cursor_cambio in pokes_equipo:
                     self.confirmar_cambio(ya_en_juego = False)
             return
+        
+        #Creamos ahora los inputs para los cambios de pokes cuando es obligatorio
+        if self.batalla.necesita_cambio_forzado():
+            pokes_equipo = []
+            for i in vivos:
+                if i != indice_activo: #Si el poke es diferente del que esta peleando
+                    pokes_equipo.append(i)
+            #If si valida si aun tienes pokes vivos en el equipo
+            if not pokes_equipo:
+                return
+                
+            #Si el cursor anda en un poke no vivo xd
+            if self.cursor_cambio not in pokes_equipo:
+                #mueve el cursor al primero de los vivos
+                self.cursor_cambio = pokes_equipo[0]
+                
+            #Si el boton presionado se encuentra entre la tecla 1 y 6
+            if pygame.K_1 <= key <= pygame.K_6:
+                #el indice igualara el num "correcto para un indice", osease entre 0 y 5
+                indice = key - pygame.K_1
+                if indice in pokes_equipo:
+                    #el cursor igualara el num del indice donde se encuentre el poke
+                    self.cursor_cambio = indice
+                    #y se mandara al campo
+                    self.confirmar_cambio(ya_en_juego = True)
+                    
+            elif key == pygame.K_RETURN:
+                if self.cursor_cambio in pokes_equipo:
+                    self.confirmar_cambio(ya_en_juego = True)
+            return
             
         #Ahora hacemos la confirmacion de la espera
         if self.esperando_confirmacion:
             if key == pygame.K_RETURN:
                 self.esperando_confirmacion = False
+                
+                self.cursor_movimiento = 0
+                self.menu_cambio_abierto = False
+                
+                nuevos_mensajes = self.batalla.get_log()
+                for mensaje in nuevos_mensajes:
+                    self.log_batalla.append(mensaje)
             return
         
         #AHORA SI, hacemos la logica para seleccionar el movimiento del pokemon.
@@ -834,11 +853,9 @@ class Game(object):
                 #abrimos el menu de cambio de poke
                 pokes_equipo = []
                 #Revisamos cada poke en el equipo que aun siga con vida
-                i = 0
                 for i in vivos:
                     if i != indice_activo:
-                        pokes_equipo.append(vivos[i])
-                    i += 1
+                        pokes_equipo.append(i)
 
                 if pokes_equipo:
                     self.menu_cambio_abierto = True
@@ -933,8 +950,6 @@ class Game(object):
                 
     #Esta funcion hara la confirmacion del cambio de Poké, sea intencional o obligatoriamente
     def confirmar_cambio(self, ya_en_juego):
-        self.pokemon_activo = self.equipo_jugador[self.cursor_cambio]
-        self.batalla.pokemon_jugador = self.pokemon_activo
         #Aqui se hace el cambio
         self.batalla.actualizar(indice_cambio = self.cursor_cambio)
         #Este for agregara los mensajes del log uno en uno
@@ -946,6 +961,7 @@ class Game(object):
         #Reinicamos el cursor
         self.cursor_movimiento = 0
         if not ya_en_juego:
+            self.cursor_movimiento = 0
             self.esperando_confirmacion = True
 
     def procesar_resultado_batalla(self):

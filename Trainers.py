@@ -34,10 +34,10 @@ class Entrenador:
         equipo = []
         #Recorremos cada clase guardada en "pokemon_clases"
         for clase in self.pokemon_clases:
-        #Creamos una nueva instancia del Pokémon (con vida completa)
+            #Creamos una nueva instancia del Pokémon (con vida completa)
             nuevo_pokemon = clase()
-        #Lo agregamos al equipo
-        equipo.append(nuevo_pokemon)
+            #Lo agregamos al equipo
+            equipo.append(nuevo_pokemon)
         #Regresamos la lista completa
         return equipo
 
