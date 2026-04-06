@@ -163,7 +163,7 @@ class STATS_BASE:
         #Movimiento = El nombre del movimiento, su tipo y la potencia del mismo
         self.potencia = np.array(movimiento.potencia)
 
-        self.efectividad = Table_Types.get_effectiveness(movimiento.tipo, defensor._tipo)
+        self.efectividad = Table_Types.get_effectiveness(movimiento.tipo, defensor.tipo)
         #Esto es para no oneshotear a todos XD
         self.daño = (self.ataque / self.defensa) * self.potencia * self.efectividad
 
@@ -185,6 +185,7 @@ class STATS_BASE:
         return self.hp_actual #devuelve la cantidad de daño hecho
         
 #------ Clases de los pokemones, cada clase hereda de la clase STATS_BASE, y se le pueden agregar atributos y metodos especificos de cada pokemon, como por ejemplo, los movimientos que puede aprender, las habilidades que tiene etc.------
+#Ya tiene imagen
 class Giovanni(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Excadrill base
@@ -199,9 +200,9 @@ class Giovanni(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Gio tendrá
-        self._movimientos = [MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Bostezo"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Ajuste Preciso"]]
+        self.movimientos = [MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Bostezo"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Ajuste Preciso"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class David(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Snorlax base
@@ -215,9 +216,9 @@ class David(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que David tendrá
-        self._movimientos = [MOVIMIENTOS["Prompt Avanzado"], MOVIMIENTOS["Ram en aumento"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Deslumbrar"]]
+        self.movimientos = [MOVIMIENTOS["Prompt Avanzado"], MOVIMIENTOS["Ram en aumento"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Deslumbrar"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class Erick(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Meowscarada base
@@ -231,9 +232,9 @@ class Erick(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Erick tendrá
-        self._movimientos = [MOVIMIENTOS["Refactorizar"], MOVIMIENTOS["Git Push"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Mandato de Avalos"]]
+        self.movimientos = [MOVIMIENTOS["Refactorizar"], MOVIMIENTOS["Git Push"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Mandato de Avalos"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class Rafa(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Slakoth base
@@ -247,9 +248,9 @@ class Rafa(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Rafa tendrá
-        self._movimientos = [MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Bostezo"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Compilar"]]
+        self.movimientos = [MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Bostezo"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Compilar"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class Joshua(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Typhlosion base
@@ -263,9 +264,9 @@ class Joshua(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Didier tendrá
-        self._movimientos = [MOVIMIENTOS["Prompt Avanzado"], MOVIMIENTOS["Ram en aumento"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Mirada Cute"]]
+        self.movimientos = [MOVIMIENTOS["Prompt Avanzado"], MOVIMIENTOS["Ram en aumento"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Mirada Cute"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class Abraham(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Lapras base
@@ -279,9 +280,9 @@ class Abraham(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Abraham tendrá
-        self._movimientos = [MOVIMIENTOS["Cálculo Mental"], MOVIMIENTOS["Integral Doble"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Enjuague"]]
+        self.movimientos = [MOVIMIENTOS["Cálculo Mental"], MOVIMIENTOS["Integral Doble"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Enjuague"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class Andrew(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Exeggutor base
@@ -295,9 +296,9 @@ class Andrew(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Alberto tendrá
-        self._movimientos = [MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Baño"], MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Actitud"]]
+        self.movimientos = [MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Baño"], MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Actitud"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class Generico_Diseño(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Delphox base
@@ -311,9 +312,9 @@ class Generico_Diseño(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que tendrá
-        self._movimientos = [MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Comision de arte"], MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Formulario"]]
+        self.movimientos = [MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Comision de arte"], MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Formulario"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class Generico_Mercadofiesta(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Kilowattrel base
@@ -327,9 +328,9 @@ class Generico_Mercadofiesta(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que tendrá
-        self._movimientos = [MOVIMIENTOS["Organizacion de Evento"], MOVIMIENTOS["Canva 2"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Rezo a San Cristian"]]
+        self.movimientos = [MOVIMIENTOS["Organizacion de Evento"], MOVIMIENTOS["Canva 2"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Rezo a San Cristian"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen -
 class Gato(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Lopunny base
@@ -343,9 +344,9 @@ class Gato(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Gato tendrá
-        self._movimientos = [MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Comision de arte"], MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Estrés"]]
+        self.movimientos = [MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Comision de arte"], MOVIMIENTOS["Siesta Mortal"], MOVIMIENTOS["Estrés"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen -
 class Osmar(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Lucario base
@@ -359,9 +360,9 @@ class Osmar(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Osmar tendrá
-        self._movimientos = [MOVIMIENTOS["Cálculo Mental"], MOVIMIENTOS["Integral Doble"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Brillo Propio"]]
+        self.movimientos = [MOVIMIENTOS["Cálculo Mental"], MOVIMIENTOS["Integral Doble"], MOVIMIENTOS["Furia Salvaje"], MOVIMIENTOS["Brillo Propio"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen -
 class Morro_Ardido(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Vivillon base
@@ -375,9 +376,9 @@ class Morro_Ardido(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Osmar tendrá
-        self._movimientos = [MOVIMIENTOS["Orgullo Total"], MOVIMIENTOS["Impacto Diva"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Aullido"]]
+        self.movimientos = [MOVIMIENTOS["Orgullo Total"], MOVIMIENTOS["Impacto Diva"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Aullido"]]
         #--------- Aqui se completa la clase
-
+#Ya tiene imagen -
 class Morra_Castrosa(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Gothitelle base
@@ -391,9 +392,9 @@ class Morra_Castrosa(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Osmar tendrá
-        self._movimientos = [MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Ilusionista"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Descuento"]]
+        self.movimientos = [MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Ilusionista"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Descuento"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class El_Rector(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Snorlax base
@@ -407,9 +408,9 @@ class El_Rector(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Osmar tendrá
-        self._movimientos = [MOVIMIENTOS["Horas Extra"], MOVIMIENTOS["Trabajo Duro"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Transformación"]]
+        self.movimientos = [MOVIMIENTOS["Horas Extra"], MOVIMIENTOS["Trabajo Duro"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Transformación"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen -
 class Chechi(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Torkoal base
@@ -423,9 +424,9 @@ class Chechi(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Chechi tendrá
-        self._movimientos = [MOVIMIENTOS["Refactorizar"], MOVIMIENTOS["Git Push"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Ajuste Preciso"]]
+        self.movimientos = [MOVIMIENTOS["Refactorizar"], MOVIMIENTOS["Git Push"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Ajuste Preciso"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen -
 class Fabian(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Aegislash base
@@ -439,9 +440,9 @@ class Fabian(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Fabian tendrá
-        self._movimientos = [MOVIMIENTOS["Engranaje Letal"], MOVIMIENTOS["SolidWorks"], MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Mandato de Avalos"]]
+        self.movimientos = [MOVIMIENTOS["Engranaje Letal"], MOVIMIENTOS["SolidWorks"], MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Mandato de Avalos"]]
         #--------- Aqui se completa la clase
-
+#Ya tiene imagen -
 class Sigma(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Mega-Lucario base
@@ -455,9 +456,9 @@ class Sigma(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Sigma tendrá
-        self._movimientos = [MOVIMIENTOS["Engranaje Letal"], MOVIMIENTOS["SolidWorks"], MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Compilar"]]
+        self.movimientos = [MOVIMIENTOS["Engranaje Letal"], MOVIMIENTOS["SolidWorks"], MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Compilar"]]
         #--------- Aqui se completa la clase
-
+#Ya tiene imagen -
 class Diseño_Raro(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Cinderace base
@@ -471,9 +472,9 @@ class Diseño_Raro(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos tendrá
-        self._movimientos = [MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Aura Fashion"], MOVIMIENTOS["Orgullo Total"], MOVIMIENTOS["Error 404"]]
+        self.movimientos = [MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Aura Fashion"], MOVIMIENTOS["Orgullo Total"], MOVIMIENTOS["Error 404"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen -
 class Youtuber_Generico(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Eelektross base
@@ -487,9 +488,9 @@ class Youtuber_Generico(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Folagor tendrá
-        self._movimientos = [MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Aura Fashion"], MOVIMIENTOS["Orgullo Total"], MOVIMIENTOS["Cansancio"]]
+        self.movimientos = [MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Aura Fashion"], MOVIMIENTOS["Orgullo Total"], MOVIMIENTOS["Cansancio"]]
         #--------- Aqui se completa la clase
-
+#Ya tiene imagen -
 class JabonZote(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Rotom Lavado base
@@ -503,9 +504,9 @@ class JabonZote(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que Folagor tendrá
-        self._movimientos = [MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Baño"], MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Generar Texto"]]
+        self.movimientos = [MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Baño"], MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Generar Texto"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen -
 class Morro_Cachimba(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Quacaval (algo asi xd) base
@@ -519,9 +520,9 @@ class Morro_Cachimba(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que CachimbaBoy tendrá
-        self._movimientos = [MOVIMIENTOS["Organizacion de Evento"], MOVIMIENTOS["Canva 2"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Mirada Juzgadora"]]
+        self.movimientos = [MOVIMIENTOS["Organizacion de Evento"], MOVIMIENTOS["Canva 2"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Mirada Juzgadora"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen -
 class YOVOY(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Coalossal base
@@ -535,9 +536,9 @@ class YOVOY(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que YOVOY tendrá
-        self._movimientos = [MOVIMIENTOS["Orgullo Total"], MOVIMIENTOS["Impacto Diva"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Controladora"]]
+        self.movimientos = [MOVIMIENTOS["Orgullo Total"], MOVIMIENTOS["Impacto Diva"], MOVIMIENTOS["Chorro a Presión"], MOVIMIENTOS["Controladora"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class GOTICA(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Grimmsnarl base
@@ -551,9 +552,9 @@ class GOTICA(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que CachimbaBoy tendrá
-        self._movimientos = [MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Ilusionista"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Little Ceasers"]]
+        self.movimientos = [MOVIMIENTOS["Es solo un amigo"], MOVIMIENTOS["Ilusionista"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Little Ceasers"]]
         #--------- Aqui se completa la clase
-        
+#Ya tiene imagen
 class Almeida(STATS_BASE):
     def __init__(self):
         # Se tomaron referencia a stats de Yveltal base
@@ -567,5 +568,5 @@ class Almeida(STATS_BASE):
             nivel = 50
         )
         # Ahora agregamos los movimientos que CachimbaBoy tendrá
-        self._movimientos = [MOVIMIENTOS["Horas Extra"], MOVIMIENTOS["Trabajo Duro"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Aullido"]]
+        self.movimientos = [MOVIMIENTOS["Horas Extra"], MOVIMIENTOS["Trabajo Duro"], MOVIMIENTOS["Encanto Brillante"], MOVIMIENTOS["Aullido"]]
         #--------- Aqui se completa la clase
