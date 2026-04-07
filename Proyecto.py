@@ -1,5 +1,5 @@
 # Archivo donde se hara el proyecto
-import pygame, sys, numpy as np
+import pygame, sys, sound_manager
 from pokedata import Table_Types, Movement, STATS_BASE
 from battle import BattleManager
 from Trainers import ENTRENADORES, get_equipo_aleatorio, get_lista_pokemon_disponibles
@@ -128,12 +128,16 @@ def draw_hp_bar(screen, x, y, hp_actual, hp_max, width=300, height=20):
 
 class Game(object):
     def __init__(self): # Iniciamos la clase
+        #iniciamos el archivo de musica y sonidos
+        self.sound = sound_manager.Sound_Manager()
+        
         # Datos del Jugador
         self.state = "MENU" # Estado actual del juego: MENU o PLAY
         self.nombre_jugador = "" # Variable para guardar el nombre del jugador, la cual se usara para referirse a el durante el juego
         self.input_text = "" # Variable para guardar el texto que el jugador ingresa
         self.equipo_jugador = [] #Array donde estaran los pokemons del jugador
         self.pokemon_activo = None
+        self.entrenador_reciente = None
         
         # Datos de la partida
         self.indice_entrenador_actual = 0 #Cuantos entrenadores llevas vencidos
@@ -173,7 +177,9 @@ class Game(object):
     def MainMenu(self, screen):
         screen.blit(self.background_menu, (0, 0)) # Se carga la imagen de fondo del menu, y se dibuja en la pantalla
         menu_mouse_pos = pygame.mouse.get_pos()
-    
+        self.sound.play_musica("main")
+        pygame.mixer.music.play(-1)
+        
         menu_text = get_font(100).render("POKE - UTR", True, GOLD)
         menu_rect = menu_text.get_rect(center=(SCREEN_WIDTH/2, 200)) # Menu rect es el rectangulo del menu, el cual se posiciona en el centro de la pantalla, a 100 pixeles de altura
     
@@ -243,8 +249,8 @@ class Game(object):
             button.changeColor(mouse) # Si el mouse esta sobre el boton, se cambia el color del texto del boton, usando el metodo changeColor de la clase Button
             button.update(screen) # Se dibuja el boton en la pantalla, usando el metodo update de la clase Button
 
-        draw_text(screen, "La suerte decide", get_font(20), DARK, SCREEN_WIDTH//2 - 190, 470)
-        draw_text(screen, "Tú eliges tus 6", get_font(20), DARK, SCREEN_WIDTH//2 + 190, 470)
+        draw_text(screen, "La suerte decide", get_font(26), DARK, SCREEN_WIDTH//2 - 190, 470)
+        draw_text(screen, "Tú eliges tus 6", get_font(26), DARK, SCREEN_WIDTH//2 + 190, 470)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -263,6 +269,7 @@ class Game(object):
 
     def SeleccionManual(self, screen):
         screen.blit(self.background_menu, (0, 0))
+        
         mouse = pygame.mouse.get_pos()
         button_previous = None
         button_next = None
@@ -467,7 +474,7 @@ class Game(object):
                 color_estado = DARK
 
             #Nombre del entrenador (con número)
-            draw_text(screen, f"{i+1}. {entrenador.nombre}", get_font(28), WHITE, 120, y_card + 22, center=False)
+            draw_text(screen, f"{i+1}. {entrenador.nombre}", get_font(28), WHITE, 120, y_card + 22, center = False)
 
             #Estado (derrotado, siguiente o bloqueado)
             draw_text(screen, estado_txt, get_font(28), color_estado, 930, y_card + 33, center=False)
@@ -493,8 +500,8 @@ class Game(object):
                 break
         #Si derrotaste a todos, mis respetos ksks
         if todos_derrotados:
-            draw_panel(screen, 250, 620, 780, 60, color = DARK, border = YELLOW)
-            draw_text(screen, "FELICIDADES:¡ERES EL CAMPEÓN DE LA UTR!", get_font(36), GOLD, SCREEN_WIDTH//2, 650)
+            draw_panel(screen, 250, 620, SCREEN_WIDTH//2 + 20, SCREEN_HEIGHT//2 + 50, color = DARK, border = GREEN)
+            draw_text(screen, "FELICIDADES:¡ERES EL CAMPEÓN DE LA UTR!", get_font(40), GREEN, SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
             
         #Este for es como los de arriba, solo que este checa si ya derrotaste a los entrenadores
         #Y de no ser asi, pues crea un boton en el siguiente pa empezar la batalla puchamon
@@ -518,8 +525,8 @@ class Game(object):
         #Esta variable se igualara al entrenador al que te vayas a enfrentar usando el indice del for en MapaEntrenadores()
         entrenador = self.entrenadores[self.indice_entrenador_actual]
 
-        draw_panel(screen, 80, 80, 1120, 560, border = YELLOW)
-        draw_text(screen, f"¡{entrenador.nombre} quiere pelear!", get_font(50), BLACK, SCREEN_WIDTH//2, 160)
+        draw_panel(screen, 80, 80, 1120, 560, border = RED)
+        draw_text(screen, f"¡{entrenador.nombre} quiere pelear!", get_font(50), WHITE, SCREEN_WIDTH//2, 160)
         #Lineas es la varible string que guardara lo pedazos que se recorten de la descripcion de cada entrenador y se dibujara
         #una debajo de la otra con el for.
         lineas = entrenador.descripcion.split("\n")
@@ -530,11 +537,11 @@ class Game(object):
         # Frase del rival con el nombre del jugador que se inserto al principio
         # Nota: Esto solo se cumple si en la parte de "Trainers.py" se puso un valor para "nombre_jugador"
         frase = entrenador.frase_inicio.format(nombre=self.nombre_jugador)
-        draw_panel(screen, 130, 370, 1020, 80, color = GREEN, border = PURPLE)
+        draw_panel(screen, 130, 370, 1020, 80, color = DARK, border = PURPLE)
         draw_text(screen, f'"{frase}"', get_font(30), WHITE, SCREEN_WIDTH//2, 410)
 
         # Tu equipo vs su equipo
-        draw_text(screen, "Tu equipo:", get_font(26), GREEN, 140, 480)
+        draw_text(screen, "Tu equipo:", get_font(30), GREEN, 140, 490)
         #Se crea una variable string vacia
         nombres_equipo_jugador = ""
         #Se recorrera cada nombre del equipo y se añadira a la variable creada anteriormente
@@ -546,9 +553,9 @@ class Game(object):
             else:
                 nombres_equipo_jugador += ", " + jugador.nombre
         #Y se dibujan en la pantalla
-        draw_text(screen, nombres_equipo_jugador, get_font(24), WHITE, 140, 505, center=False)
+        draw_text(screen, nombres_equipo_jugador, get_font(26), WHITE, 140, 515, center = False)
 
-        draw_text(screen, "Su equipo:", get_font(26), RED, 140, 545)
+        draw_text(screen, "Su equipo:", get_font(30), RED, 140, 560)
 
         # Lo mismo pero con el equipo rival
         nombres_rival = ""
@@ -560,9 +567,9 @@ class Game(object):
             else:
                 nombres_rival += ", " + nombre
 
-        draw_text(screen, nombres_rival, get_font(24), WHITE, 140, 570, center=False)
+        draw_text(screen, nombres_rival, get_font(24), WHITE, 140, 590, center = False)
 
-        button_fight_time = Button(None, (SCREEN_WIDTH//2, 680), "¡A PELEAR!", get_font(36), GOLD, WHITE)
+        button_fight_time = Button(None, (SCREEN_WIDTH//2, 680), "¡A PELEAR!", get_font(40), WHITE, DARK)
         button_fight_time.changeColor(mouse)
         button_fight_time.update(screen)
         
@@ -714,13 +721,13 @@ class Game(object):
         if self.batalla.batalla_terminada():
             pass
         elif self.batalla.necesita_cambio_forzado():
-            draw_text(screen, "↑↓ Mover  |  ENTER para enviar", get_font(20), RED, SCREEN_WIDTH//2, 708)
+            draw_text(screen, "1 - 6 Tecla cambiar", get_font(20), RED, SCREEN_WIDTH//2, 708)
         elif self.menu_cambio_abierto:
-            draw_text(screen, "↑↓ Mover  |  ENTER para cambiar  |  ESC cancelar", get_font(18), DARK_BLUE, SCREEN_WIDTH//2, 708)
+            draw_text(screen, "1 - 6 Tecla cambiar | ESC cancelar", get_font(18), DARK_BLUE, SCREEN_WIDTH//2, 708)
         elif self.esperando_confirmacion:
-            draw_text(screen, "Presiona ENTER para continuar...", get_font(22), YELLOW, SCREEN_WIDTH//2, 708)
+            draw_text(screen, "Presiona ENTER para continuar...", get_font(40), WHITE, SCREEN_WIDTH//2, 360)
         else:
-            draw_text(screen, "↑↓ Mover  |  ENTER/1-4 atacar  |  'C' cambiar pokémon", get_font(20), DARK_BLUE, 500, 708)
+            draw_text(screen, "Mover (Flechas) |  ENTER/1-4 atacar  |  'C' cambiar pokémon", get_font(20), DARK_BLUE, 600, 708)
         #Este if esta aqui abajo por lo mismo de que tiene al final del pygame.display.update(), que es el responsable
         #de recargar todos los dibujos que se pongan en la pantalla, si lo saco se dibujara todo de que 60 veces por segundo!
         #Y no queremos eso xd. Asi que se quedara en esta logica
@@ -729,9 +736,11 @@ class Game(object):
             if self.batalla.ganador == "JUGADOR":
                 ganador_text = f"¡{self.nombre_jugador} ganó!"
                 color_id = GREEN
+                self.sound.play_musica("victoria")
             else:
                 ganador_text = f"¡Perdiste contra {entrenador.nombre}!"
                 color_id = RED
+                self.sound.play_musica("derrota")
             draw_text(screen, ganador_text, get_font(58), color_id, SCREEN_WIDTH//2, 310)
             draw_text(screen, "ENTER para continuar", get_font(30), YELLOW, SCREEN_WIDTH//2, 385)
 
@@ -786,6 +795,7 @@ class Game(object):
                     self.cursor_cambio = indice
                     #y se mandara al campo
                     self.confirmar_cambio(ya_en_juego = False)
+                    self.sound.play("Cambio")
                     
             elif key == pygame.K_RETURN:
                 if self.cursor_cambio in pokes_equipo:
@@ -816,6 +826,7 @@ class Game(object):
                     self.cursor_cambio = indice
                     #y se mandara al campo
                     self.confirmar_cambio(ya_en_juego = True)
+                    self.sound.play("Cambio")
                     
             elif key == pygame.K_RETURN:
                 if self.cursor_cambio in pokes_equipo:
@@ -846,8 +857,10 @@ class Game(object):
             #Aqui hacemos lo de arriba, un como "circulo" donde no pueda seleccionar un movimiento inexistente
             if key == pygame.K_UP:
                 self.cursor_movimiento = (self.cursor_movimiento - 1) % len(movimientos)
+                self.sound.play("Cambio")
             elif key == pygame.K_DOWN:
                 self.cursor_movimiento = (self.cursor_movimiento + 1) % len(movimientos)
+                self.sound.play("Cambio")
                 #Tecla para cambiar de poke
             elif key == pygame.K_c:
                 #abrimos el menu de cambio de poke
@@ -864,15 +877,19 @@ class Game(object):
             elif key == pygame.K_1:
                 #Usamos el primer movimiento
                 self.usar_movimiento(0)
+                self.sound.play("Cambio")
             elif key == pygame.K_2:
                 #Usamos el segundo movimiento
                 self.usar_movimiento(1)
+                self.sound.play("Cambio")
             elif key == pygame.K_3:
                 #Usamos el tercer movimiento
                 self.usar_movimiento(2)
+                self.sound.play("Cambio")
             elif key == pygame.K_4:
                 #Usamos el cuarto movimiento
                 self.usar_movimiento(3)
+                self.sound.play("Cambio")
             elif key == pygame.K_RETURN:
                 self.usar_movimiento(self.cursor_movimiento)
 
@@ -880,46 +897,42 @@ class Game(object):
     def resultado(self, screen):
         mouse = pygame.mouse.get_pos()
         #Creamos una varible para determinar si el jugador Gano o no
-        gano_jugador = self.batalla and self.batalla.ganador == "JUGADOR"
+        gano_jugador = self.batalla.ganador == "JUGADOR"
         button_continuar = None
         button_menu = None
-        
-        #si el jugador gano, dibujara un fondo diferente en cada situacion con su repectivo panel
-        if gano_jugador:
-            screen.blit(self.background_play, (0,0))
-            #Si ganamos, el indicie del entrenador se restara 1 faltando asi los qu falten
-            indice_entrenador = self.indice_entrenador_actual - 1
-        else:
-            screen.blit(self.background_game_over, (0,0))
-            #Si perdemos, no se resta nada y se deja igual por que, pues no ganamos xd
-            indice_entrenador = self.indice_entrenador_actual
             
         draw_panel(screen, 180, 130, SCREEN_WIDTH//2, SCREEN_HEIGHT//2, border = YELLOW)
         #Guardamos dentro de una nueva variable el indice nuevo de los entrenadores faltantes
-        entrenador = self.entrenadores[indice_entrenador]
+        entrenador = self.entrenador_reciente
         #Si ganamos, se dibuja el texto encima del panel que ganamos y la linea de derrota del entrenador
         if gano_jugador:
-            draw_text(screen, "¡VICTORIA!", get_font(70), GREEN, SCREEN_WIDTH//2, 230)
+            screen.blit(self.background_play, (0,0))
+            draw_text(screen, "¡VICTORIA!", get_font(100), GREEN, SCREEN_WIDTH//2, 230)
             frase_derrota = entrenador.frase_derrota.format(nombre = self.nombre_jugador)
-            draw_text(screen, f'"{frase_derrota}"', get_font(26), GOLD, SCREEN_WIDTH//2, 330)
+            draw_text(screen, f'"{frase_derrota}"', get_font(36), WHITE, SCREEN_WIDTH//2, 330)
+            if not pygame.mixer.music.get_busy():
+                self.sound.play_musica("victoria")
             #Si aun faltan entrenadores por pelear, pues dibuja quien sera el siguiente
             if self.indice_entrenador_actual < len(self.entrenadores):
                 siguiente = self.entrenadores[self.indice_entrenador_actual]
-                draw_text(screen, f"Siguiente rival: {siguiente.nombre}", get_font(28), WHITE, SCREEN_WIDTH//2, 410)
+                draw_text(screen, f"Siguiente rival: {siguiente.nombre}", get_font(42), RED, SCREEN_WIDTH//2, 410)
             #Si ya no hay entrenadores restantes, osea que ganaste. Se dibuja que ganaste pues
             else:
                 draw_text(screen, "¡¡¡ERES EL CAMPEÓN DE LA UTR!!!", get_font(34), YELLOW, SCREEN_WIDTH//2, 410)
+                self.sound.play_musica("victoria")
         #Ya si perdiste pues, se dibuja el hecho de que perdiste
         else:
+            screen.blit(self.background_game_over, (0,0))
             draw_text(screen, "¡DERROTA!", get_font(70), RED, SCREEN_WIDTH//2, 230)
             draw_text(screen, f"Perdiste contra {entrenador.nombre}", get_font(28), WHITE, SCREEN_WIDTH//2, 330)
             draw_text(screen, "Puedes intentarlo de nuevo", get_font(24), DARK, SCREEN_WIDTH//2, 380)
+            self.sound.play_musica("derrota")
 
         #Ahora le preguntamos al jugador que quiere hacer, si seguir jugando o no.
-        button_continuar = Button(None, (SCREEN_WIDTH//2, 510), "CONTINUAR", get_font(36), YELLOW, WHITE)
+        button_continuar = Button(None, (SCREEN_WIDTH//2, 510), "CONTINUAR", get_font(36), GOLD, WHITE)
         button_continuar.changeColor(mouse)
         button_continuar.update(screen)
-        button_menu = Button(None, (SCREEN_WIDTH//2, 565), "VOLVER AL MENÚ", get_font(28), DARK, WHITE)
+        button_menu = Button(None, (SCREEN_WIDTH//2, 565), "VOLVER AL MENÚ", get_font(36), DARK, WHITE)
         button_menu.changeColor(mouse)
         button_menu.update(screen)
         
@@ -929,10 +942,28 @@ class Game(object):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_continuar.checkForInput(mouse):
+                    #Reseteamos todo indicio de batalla anterior para continuar la siguiente batalla
+                    self.batalla = None
+                    self.log_batalla = []
+                    self.cursor_movimiento = 0
+                    self.esperando_confirmacion = False
+                    self.menu_cambio_abierto = False
+                    self.sound.play("cambio")
+                    self.sound.play_musica("main")
+                    pygame.mixer.music.play(-1)
+
+                    #Apuntar pokemon_activo al primer poke vivo del equipo
+                    for poke in self.equipo_jugador:
+                        if poke.hp_actual > 0:
+                            self.pokemon_activo = poke
+                            break
+                        
                     self.state = "MAPA_ENTRENADORES"
                 if button_menu.checkForInput(mouse):
                     self.reset_juego()
                     self.state = "MENU"
+                    
+        pygame.display.update()
                     
     #Haremos una funcion para reiniciar el juego y asi hacer un loop infinito
     def reset_juego(self):
@@ -965,9 +996,10 @@ class Game(object):
             
 
     def procesar_resultado_batalla(self):
-        entrenador_actual = self.entrenadores[self.indice_entrenador_actual]
+        self.entrenador_reciente = self.entrenadores[self.indice_entrenador_actual]
+        
         if self.batalla.ganador == "JUGADOR":
-            entrenador_actual.derrotado = True
+            self.entrenador_reciente.derrotado = True
             self.indice_entrenador_actual += 1
         self.state = "RESULTADO"
         
@@ -989,6 +1021,7 @@ class Game(object):
         
 def main():
     pygame.init()
+    pygame.mixer.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("POKEUTR") # Se establece el titulo de la ventana
     clock = pygame.time.Clock() # Se crea un reloj para controlar los frames por segundo del juego

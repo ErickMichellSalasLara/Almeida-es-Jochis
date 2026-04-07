@@ -129,45 +129,63 @@ class STATS_BASE:
             if movimiento.efecto == "buff_ataque":
                 #Para que el buffeo no sea hacia el infinito, se aplicaran los metodos MAX y MIN. Los cuales limitan estos valores
                 #Se hace primero la multiplicación
+                print(f"El ataque base de {self.nombre} es de: {self.ataque}")
                 self.mods[0] *= 1.2
                 #Y luego se limita
                 self.mods[0] = min(self.mods[0], 4.0)
+                ataque_real = self.ataque * self.mods[0]
+                print(f"{self.nombre} subio su ataque a: {ataque_real}")
 
             elif movimiento.efecto == "debuff_ataque":
+                print(f"El ataque base de {self.nombre} es de: {self.ataque}")
                 self.mods[0] *= 0.8
                 self.mods[0] = max(self.mods[0], 0.25)
-
+                ataque_real = self.ataque * self.mods[0]
+                print(f"{self.nombre} bajo su ataque a: {ataque_real}")
+                
             elif movimiento.efecto == "buff_defensa":
+                print(f"La defensa base de {self.nombre} es de: {self.defensa}")
                 self.mods[1] *= 1.2
-                self.mods[1] = min(self.mods[1], 4.0)
-
+                self.mods[1] = min(self.mods[1], 4.0)   
+                defensa_real = self.defensa * self.mods[1]
+                print(f"{self.nombre} subio su defensa a: {defensa_real}")
+                
             elif movimiento.efecto == "debuff_defensa":
+                print(f"La defensa base de {self.nombre} es de: {self.defensa}")
                 self.mods[1] *= 0.8
                 self.mods[1] = max(self.mods[1], 0.25)
+                defensa_real = self.defensa * self.mods[1]
+                print(f"{self.nombre} bajo su defensa a: {defensa_real}")
 
             elif movimiento.efecto == "buff_velocidad":
+                print(f"La velocidad base de {self.nombre} es de: {self.velocidad}")
                 self.mods[2] *= 1.2
                 self.mods[2] = min(self.mods[2], 4.0)
+                velocidad_real = self.velocidad * self.mods[2]
+                print(f"{self.nombre} subio su velocidad a: {velocidad_real}")
 
             elif movimiento.efecto == "debuff_velocidad":
+                print(f"La velocidad base de {self.nombre} es de: {self.velocidad}")
                 self.mods[2] *= 0.8
                 self.mods[2] = max(self.mods[2], 0.25)
+                velocidad_real = self.velocidad * self.mods[2]
+                print(f"{self.nombre} bajo su velocidad a: {velocidad_real}")
                 
             return self.mods
         
     def calcular_daño(self, atacante, defensor, movimiento):
         #Atacante = El que ataca. Y el ataque es el tipo del personaje
-        self.ataque = np.array(atacante.ataque * atacante.mods[0])  # Aplicar mod de ataque
+        ataque = np.multiply(atacante.ataque, atacante.mods[0])  # Aplicar mod de ataque
         #Defensor = El que se defiende. Y la defensa es el tipo del personaje
-        self.defensa = np.array(defensor.defensa * defensor.mods[1])  # Aplicar mod de defensa
+        defensa = np.multiply(defensor.defensa, defensor.mods[1])  # Aplicar mod de defensa
         #Movimiento = El nombre del movimiento, su tipo y la potencia del mismo
-        self.potencia = np.array(movimiento.potencia)
+        potencia = np.array(movimiento.potencia)
 
-        self.efectividad = Table_Types.get_effectiveness(movimiento.tipo, defensor.tipo)
+        efectividad = Table_Types.get_effectiveness(movimiento.tipo, defensor.tipo)
         #Esto es para no oneshotear a todos XD
-        self.daño = (self.ataque / self.defensa) * self.potencia * self.efectividad
+        daño = (ataque / defensa) * potencia * efectividad
 
-        return max(1, int(self.daño))
+        return max(1, int(daño))
     
     def reset_mods(self):
         #Se resetean los valor por default para que no se queden con los buffos o debuffos anteriores
@@ -193,10 +211,10 @@ class Giovanni(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Giovanni",
             tipo = "FLOJO",
-            hp_max = 110,
-            ataque = 135,
-            defensa = 60,
-            velocidad = 88,
+            hp_max = 254,
+            ataque = 100,
+            defensa = 100,
+            velocidad = 80,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Gio tendrá
@@ -209,10 +227,10 @@ class David(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "David",
             tipo = "CHATGIPITY",
-            hp_max = 160,
-            ataque = 110,
-            defensa = 65,
-            velocidad = 30,
+            hp_max = 260,
+            ataque = 90,
+            defensa = 120,
+            velocidad = 50,
             nivel = 50
         )
         # Ahora agregamos los movimientos que David tendrá
@@ -225,9 +243,9 @@ class Erick(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Erick",
             tipo = "TICS",
-            hp_max = 76,
-            ataque = 110,
-            defensa = 70,
+            hp_max = 180,
+            ataque = 120,
+            defensa = 85,
             velocidad = 123,
             nivel = 50
         )
@@ -241,10 +259,10 @@ class Rafa(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Rafa",
             tipo = "FLOJO",
-            hp_max = 60,
-            ataque = 60,
-            defensa = 60,
-            velocidad = 30,
+            hp_max = 138,
+            ataque = 80,
+            defensa = 80,
+            velocidad = 50,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Rafa tendrá
@@ -257,10 +275,10 @@ class Joshua(STATS_BASE):
         super().__init__(
             nombre = "Joshua",
             tipo = "CHATGIPITY",
-            hp_max = 78,
-            ataque = 84,
-            defensa = 78,
-            velocidad = 100,
+            hp_max = 220,
+            ataque = 114,
+            defensa = 100,
+            velocidad = 95,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Didier tendrá
@@ -273,10 +291,10 @@ class Abraham(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Abraham",
             tipo = "INTELIGENTE",
-            hp_max = 130,
-            ataque = 85,
-            defensa = 80,
-            velocidad = 60,
+            hp_max = 300,
+            ataque = 100,
+            defensa = 150,
+            velocidad = 50,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Abraham tendrá
@@ -289,10 +307,10 @@ class Andrew(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Andrew",
             tipo = "DUCHA",
-            hp_max = 95,
-            ataque = 95,
-            defensa = 85,
-            velocidad = 55,
+            hp_max = 180,
+            ataque = 120,
+            defensa = 100,
+            velocidad = 70,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Alberto tendrá
@@ -305,10 +323,10 @@ class Generico_Diseño(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Generico Diseño",
             tipo = "FURROS",
-            hp_max = 75,
-            ataque = 69,
-            defensa = 72,
-            velocidad = 104,
+            hp_max = 180,
+            ataque = 130,
+            defensa = 90,
+            velocidad = 100,
             nivel = 50
         )
         # Ahora agregamos los movimientos que tendrá
@@ -321,10 +339,10 @@ class Generico_Mercadofiesta(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Generico Mercadofiesta",
             tipo = "MERCADOFIESTA",
-            hp_max = 70,
-            ataque = 70,
-            defensa = 60,
-            velocidad = 125,
+            hp_max = 200,
+            ataque = 80,
+            defensa = 120,
+            velocidad = 100,
             nivel = 50
         )
         # Ahora agregamos los movimientos que tendrá
@@ -337,10 +355,10 @@ class Gato(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Gato",
             tipo = "FURROS",
-            hp_max = 65,
-            ataque = 136,
-            defensa = 94,
-            velocidad = 123,
+            hp_max = 135,
+            ataque = 110,
+            defensa = 100,
+            velocidad = 150,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Gato tendrá
@@ -353,9 +371,9 @@ class Osmar(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Osmar",
             tipo = "INTELIGENTE",
-            hp_max = 70,
+            hp_max = 280,
             ataque = 110,
-            defensa = 70,
+            defensa = 140,
             velocidad = 90,
             nivel = 50
         )
@@ -369,9 +387,9 @@ class Morro_Ardido(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Morro Ardido",
             tipo = "JOCHIS",
-            hp_max = 80,
-            ataque = 52,
-            defensa = 50,
+            hp_max = 190,
+            ataque = 102,
+            defensa = 102,
             velocidad = 89,
             nivel = 50
         )
@@ -385,10 +403,10 @@ class Morra_Castrosa(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Morra Castrosa",
             tipo = "VIEJA",
-            hp_max = 70,
-            ataque = 55,
-            defensa = 95,
-            velocidad = 65,
+            hp_max = 198,
+            ataque = 80,
+            defensa = 120,
+            velocidad = 80,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Osmar tendrá
@@ -401,10 +419,10 @@ class El_Rector(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "El Rector",
             tipo = "JORNADA_LABORAL",
-            hp_max = 105,
-            ataque = 150,
-            defensa = 90,
-            velocidad = 95,
+            hp_max = 200,
+            ataque = 120,
+            defensa = 120,
+            velocidad = 90,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Osmar tendrá
@@ -417,10 +435,10 @@ class Chechi(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Chechi",
             tipo = "TICS",
-            hp_max = 70,
-            ataque = 85,
-            defensa = 140,
-            velocidad = 20,
+            hp_max = 340,
+            ataque = 75,
+            defensa = 150,
+            velocidad = 40,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Chechi tendrá
@@ -433,10 +451,10 @@ class Fabian(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Fabian",
             tipo = "MECOSTRONICOS",
-            hp_max = 70,
+            hp_max = 180,
             ataque = 140,
-            defensa = 50,
-            velocidad = 60,
+            defensa = 100,
+            velocidad = 70,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Fabian tendrá
@@ -449,10 +467,10 @@ class Sigma(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Sigma",
             tipo = "MECOSTRONICOS",
-            hp_max = 70,
+            hp_max = 200,
             ataque = 165,
-            defensa = 95,
-            velocidad = 110,
+            defensa = 100,
+            velocidad = 120,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Sigma tendrá
@@ -465,10 +483,10 @@ class Diseño_Raro(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Femboy de Diseño",
             tipo = "FEMBOY",
-            hp_max = 80,
+            hp_max = 212,
             ataque = 116,
-            defensa = 75,
-            velocidad = 119,
+            defensa = 110,
+            velocidad = 90,
             nivel = 50
         )
         # Ahora agregamos los movimientos tendrá
@@ -481,10 +499,10 @@ class Youtuber_Generico(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Folagor",
             tipo = "FEMBOY",
-            hp_max = 85,
-            ataque = 115,
-            defensa = 80,
-            velocidad = 50,
+            hp_max = 200,
+            ataque = 110,
+            defensa = 110,
+            velocidad = 80,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Folagor tendrá
@@ -497,10 +515,10 @@ class JabonZote(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Jabon Zote",
             tipo = "DUCHA",
-            hp_max = 70,
+            hp_max = 280,
             ataque = 65,
-            defensa = 130,
-            velocidad = 86,
+            defensa = 160,
+            velocidad = 70,
             nivel = 50
         )
         # Ahora agregamos los movimientos que Folagor tendrá
@@ -513,9 +531,9 @@ class Morro_Cachimba(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "CachimbaBoy",
             tipo = "MERCADOFIESTA",
-            hp_max = 85,
-            ataque = 120,
-            defensa = 80,
+            hp_max = 190,
+            ataque = 130,
+            defensa = 100,
             velocidad = 85,
             nivel = 50
         )
@@ -529,10 +547,10 @@ class YOVOY(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "YOVOY",
             tipo = "JOCHIS",
-            hp_max = 110,
+            hp_max = 260,
             ataque = 80,
-            defensa = 120,
-            velocidad = 30,
+            defensa = 150,
+            velocidad = 50,
             nivel = 50
         )
         # Ahora agregamos los movimientos que YOVOY tendrá
@@ -545,9 +563,9 @@ class GOTICA(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Gotica",
             tipo = "VIEJA",
-            hp_max = 95,
+            hp_max = 235,
             ataque = 120,
-            defensa = 65,
+            defensa = 100,
             velocidad = 60,
             nivel = 50
         )
@@ -561,9 +579,9 @@ class Almeida(STATS_BASE):
         super().__init__( # Esta linea llama al constructor de la clase padre (STATS_BASE) para inicializar los atributos comunes a todos los pokemones, como el nombre, el tipo, el hp maximo, el ataque, la defensa, la velocidad y el nivel
             nombre = "Almeida",
             tipo = "JORNADA_LABORAL",
-            hp_max = 126,
+            hp_max = 200,
             ataque = 131,
-            defensa = 95,
+            defensa = 110,
             velocidad = 100,
             nivel = 50
         )

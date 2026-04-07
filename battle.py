@@ -1,5 +1,5 @@
 #Este tercer archivo tendrá toda la logica de los ataques por turno y asi.
-import random
+import random, sound_manager
 from pokedata import STATS_BASE, Table_Types
 
 class BattleManager:
@@ -11,11 +11,12 @@ class BattleManager:
         self.indice_activo_enemigo = 0
         self.pokemon_jugador = self.equipo_jugador[self.indice_activo]
         self.pokemon_enemigo = self.equipo_enemigo[self.indice_activo_enemigo]
+        self.sound = sound_manager.Sound_Manager()
 
         #Esta parte determina que estamos dentro del apartado "Seleccion de movimiento"
-        self.estado = "SELECCION_MOVIMIENTO"  # Siempre empieza aqui
-        self.turno = 1                         # Contador de turnos
-        self.ganador = None                    # Quien gano al final (None = nadie aun)
+        self.estado = "SELECCION_MOVIMIENTO" #Siempre empieza aqui
+        self.turno = 1# Contador de turnos
+        self.ganador = None #Quien gano al final (None = nadie aun)
 
         #Aqui se almacenara que movimiento fue el que escogio el jugador
         self.movimiento_jugador = None
@@ -29,10 +30,10 @@ class BattleManager:
 
     #------- METODO PRINCIPAL: lo llamas cada frame desde main.py
     
-    #  Dependiendo del estado en el que te encuentres, hara cosas diferentes, tales como, hacer la batalla, aplicar efectos, etc.
+    # Dependiendo del estado en el que te encuentres, hara cosas diferentes, tales como, hacer la batalla, aplicar efectos, etc.
     def actualizar(self, indice_movimiento_jugador = None, indice_cambio = None):
         #indice_movimiento_jugador → 0-3, el jugador eligió atacar
-        #indice_cambio             → 0-5, el jugador eligió cambiar de pokémon
+        #indice_cambio → 0-5, el jugador eligió cambiar de pokémon
         if self.estado == "SELECCION_MOVIMIENTO":
             # El jugador quiere cambiar de pokémon voluntariamente
             if indice_cambio is not None:
@@ -191,12 +192,14 @@ class BattleManager:
         #Verificamos si el movimiento acierta
         if not movimiento.acertar():
             self.log.append(f"{nombre_atacante} uso {nombre_movimiento}... Pero fallo!")
+            #Y reproducimos el sonido
+            self.sound.play("fallo")
             return  #El movimiento falla, no pasa nada mas
 
         #Movimiento de efecto (buff o debuff, potencia = 0)
         if movimiento.potencia == 0 and movimiento.efecto is not None:
             # Determinamos a quien afecta el efecto. Los buffs se aplican al atacante, los debuffs al defensor
-            if "buff" in movimiento.efecto:
+            if movimiento.efecto.startswith("buff"):
                 objetivo = atacante
                 nombre_objetivo = nombre_atacante
             else:
@@ -204,26 +207,27 @@ class BattleManager:
                 nombre_objetivo = defensor.nombre
 
             objetivo.aplicar_efecto(movimiento)
+            self.log.append(f"{nombre_atacante} uso {nombre_movimiento}!")
 
             # Mensajes descriptivos segun el tipo de efecto
             if movimiento.efecto == "buff_ataque":
-                self.log.append(f"{nombre_atacante} uso {nombre_movimiento}!")
                 self.log.append(f"El ataque de {nombre_objetivo} subio!")
+                self.sound.play_movimiento(movimiento)
             elif movimiento.efecto == "debuff_ataque":
-                self.log.append(f"{nombre_atacante} uso {nombre_movimiento}!")
                 self.log.append(f"El ataque de {nombre_objetivo} bajo!")
+                self.sound.play_movimiento(movimiento)
             elif movimiento.efecto == "buff_defensa":
-                self.log.append(f"{nombre_atacante} uso {nombre_movimiento}!")
                 self.log.append(f"La defensa de {nombre_objetivo} subio!")
+                self.sound.play_movimiento(movimiento)
             elif movimiento.efecto == "debuff_defensa":
-                self.log.append(f"{nombre_atacante} uso {nombre_movimiento}!")
                 self.log.append(f"La defensa de {nombre_objetivo} bajo!")
+                self.sound.play_movimiento(movimiento)
             elif movimiento.efecto == "buff_velocidad":
-                self.log.append(f"{nombre_atacante} uso {nombre_movimiento}!")
                 self.log.append(f"La velocidad de {nombre_objetivo} subio!")
+                self.sound.play_movimiento(movimiento)
             elif movimiento.efecto == "debuff_velocidad":
-                self.log.append(f"{nombre_atacante} uso {nombre_movimiento}!")
                 self.log.append(f"La velocidad de {nombre_objetivo} bajo!")
+                self.sound.play_movimiento(movimiento)
         #Movimiento de daño (potencia > 0)
         else:
             #Usamos el calcular_daño que ya tienes en STATS_BASE
@@ -237,13 +241,13 @@ class BattleManager:
             efectividad = Table_Types.get_effectiveness(movimiento.tipo, defensor.tipo)
             if efectividad == 4.0:
                 self.log.append("Es ULTRA efectivo!")
+                self.sound.play("x4SuperEffective")
             elif efectividad == 2.0:
                 self.log.append("Es super efectivo!")
+                self.sound.play("x2Effective")
             elif efectividad <= 0.5:
                 self.log.append("No es muy efectivo...")
-            #Mensaje si el pokemon se debilita
-            if defensor.hp_actual <= 0:
-                self.log.append(f"{defensor.nombre} se debilito!")
+                self.sound.play("NoEffective")
 
     #-------- VERIFICAR FIN DE BATALLA
     def verificar_fin_batalla(self):
@@ -255,6 +259,7 @@ class BattleManager:
                 # Ya no tienes pokémon, pues pierdes
                 self.ganador = "ENEMIGO"
                 self.log.append("¡No te quedan más pokémon! ¡Perdiste!")
+                self.sound.play_musica("derrota")
                 return True
             else:
                 #Si aun hay pokes, pues se cambia al siguiente
@@ -269,6 +274,8 @@ class BattleManager:
             if not hay_siguiente:
                 self.ganador = "JUGADOR"
                 self.log.append("¡Ganaste! ¡El rival no tiene más pokémon!")
+                self.sound.play("celebracion")
+                self.sound.play_musica("victoria")
                 return True
             #Si sí tenía otro, la batalla sigue
             return False
